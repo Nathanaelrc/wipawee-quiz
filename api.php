@@ -45,14 +45,14 @@ $score         = (int) $input['score'];
 $total_enviado = (int) $input['total'];
 
 // Total esperado debe coincidir con las preguntas del frontend
-$TOTAL_ESPERADO = 5;
+$TOTAL_ESPERADO = 9;
 
 /* ────────────────────────────────────────────────────────────── */
 /*  Validar puntaje perfecto                                     */
 /*  Se requiere exactamente 5/5 — cualquier otro valor           */
 /*  devuelve success:false sin revelar el mensaje.               */
 /* ────────────────────────────────────────────────────────────── */
-if ($total_enviado !== $TOTAL_ESPERADO || $score !== $TOTAL_ESPERADO) {
+if ($total_enviado !== $TOTAL_ESPERADO || ($score / $TOTAL_ESPERADO) < 0.8) {
     http_response_code(200);
     echo json_encode(['success' => false, 'message' => null]);
     exit;

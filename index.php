@@ -252,13 +252,13 @@
             </h1>
             <p class="text-muted mb-4 mx-auto" style="font-size:.93rem; max-width:360px; line-height:1.7;">
                 A little romantic quiz made with all my love.<br>
-                Answer the <strong>5 questions</strong> and unlock your special gift. 🌹
+                Answer the <strong>9 questions</strong> and unlock your special gift. 🌹
             </p>
 
             <!-- Estadísticas decorativas -->
             <div class="d-flex justify-content-center gap-5 mb-4">
                 <div class="text-center">
-                    <div class="fw-bold" style="color:#f43f5e; font-size:1.6rem;">5</div>
+                    <div class="fw-bold" style="color:#f43f5e; font-size:1.6rem;">9</div>
                     <div class="text-muted" style="font-size:.73rem; text-transform:uppercase; letter-spacing:.05em;">Questions</div>
                 </div>
                 <div class="vr"></div>
@@ -296,7 +296,7 @@
                 </span>
                 <span id="label-score" class="badge rounded-pill px-3 py-2"
                       style="background:rgba(245,158,11,.12); color:#b45309; font-size:.82rem;">
-                    ⭐ 0 / 5
+                    ⭐ 0 / 9
                 </span>
             </div>
 
@@ -315,7 +315,7 @@
                          style="width:38px; height:38px; background:linear-gradient(135deg,#f43f5e,#fb7185); font-size:.9rem;">
                         1
                     </div>
-                    <span class="text-muted" style="font-size:.8rem;">of 5 questions</span>
+                    <span class="text-muted" style="font-size:.8rem;">of 9 questions</span>
                 </div>
 
                 <!-- Texto de la pregunta -->
@@ -343,10 +343,10 @@
 
             <div class="mb-2" style="font-size:3rem;">🎉</div>
             <h2 class="playfair fw-bold mb-1" style="color:#be185d; font-size:clamp(1.5rem,5vw,2rem);">
-                You did it, my love!
+                You did it, my love! 🎉
             </h2>
             <p class="text-muted mb-4" style="font-size:.93rem;">
-                You answered everything perfectly. Here is your gift... 💝
+                You scored <strong id="score-porcentaje" style="color:#f43f5e; font-size:1.15em;">—</strong> — Here is your special gift... 💝
             </p>
 
             <!-- ── Carta de amor / Pergamino ── -->
@@ -393,13 +393,15 @@
                 <div class="mb-3" style="font-size:3rem;">🥺</div>
                 <h2 class="playfair fw-bold mb-2" style="color:#be185d;">So close, my love! 💕</h2>
                 <p class="text-muted mb-4" style="font-size:.93rem;">
-                    You didn't reach the perfect score, but I know you can do it.<br>
-                    Try again, I'm waiting for you!
+                    You need at least <strong>80%</strong> to unlock the gift.<br>
+                    I believe in you — try again! 💪
                 </p>
                 <div class="rounded-3 p-3 mb-4"
                      style="background:rgba(244,63,94,.07); border:1px solid rgba(244,63,94,.18);">
                     <span class="fw-semibold" style="color:#be185d;">
-                        Your score:&ensp;<span id="puntaje-final">0</span> / 5 ⭐
+                        Your score:&ensp;<span id="puntaje-final">0</span> / 9
+                        &nbsp;·&nbsp;
+                        <span id="porcentaje-final" style="font-size:1.1em;">0%</span> ⭐
                     </span>
                 </div>
                 <button id="btn-reintentar"
@@ -422,7 +424,7 @@
     /*     y el mensaje de amor en api.php                            */
     /* ============================================================== */
 
-    const TOTAL = 5;
+    const TOTAL = 9;
 
     /* ──────────────────────────────────────────────────────────── */
     /*  ✏️  PERSONALIZA TUS PREGUNTAS                               */
@@ -453,6 +455,26 @@
             pregunta: 'What special nickname do I call you with the most love? 💕',
             opciones:  ['My Sky', 'My Love', 'Princess', 'Queen'],
             correcta:  2   // ← Princess 👸
+        },
+        {
+            pregunta: 'What is my favorite color? 🎨',
+            opciones:  ['Red', 'Green', 'Blue', 'Black'],
+            correcta:  2   // ← Blue
+        },
+        {
+            pregunta: 'What do I love the most about your face? 😍',
+            opciones:  ['Your lips', 'Your eyes and smile', 'Your nose', 'Everything equally'],
+            correcta:  1   // ← Eyes and smile
+        },
+        {
+            pregunta: 'Who is the most important person in my life? 💖',
+            opciones:  ['My family', 'My best friend', 'My boss', 'You'],
+            correcta:  3   // ← Her (You)
+        },
+        {
+            pregunta: 'What type of music gets me in a good mood? 🎵',
+            opciones:  ['Rock & Metal', 'Classical & Jazz', 'Rap & Pop', 'Reggaeton & Salsa'],
+            correcta:  2   // ← Rap-Pop
         }
     ];
 
@@ -634,10 +656,13 @@
     /*  Finalizar quiz                                             */
     /* ──────────────────────────────────────────────────────────── */
     function finalizarQuiz() {
-        if (puntaje === TOTAL) {
+        const porcentaje = Math.round((puntaje / TOTAL) * 100);
+        if (porcentaje >= 80) {
+            $('score-porcentaje').textContent = porcentaje + '%';
             obtenerMensajeDeAmor();
         } else {
             $('puntaje-final').textContent = puntaje;
+            $('porcentaje-final').textContent = porcentaje + '%';
             mostrarPantalla('screen-derrota');
         }
     }
@@ -688,6 +713,8 @@
         respondido = false;
         $('barra-progreso').style.width = '0%';
         $('label-score').textContent    = `⭐ 0 / ${TOTAL}`;
+        if ($('score-porcentaje')) $('score-porcentaje').textContent = '—';
+        if ($('porcentaje-final')) $('porcentaje-final').textContent = '0%';
 
         // Resetear carta
         const carta = $('carta-amor');
