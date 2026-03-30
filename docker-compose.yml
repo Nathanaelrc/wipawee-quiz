@@ -1,0 +1,9 @@
+services:
+  quiz:
+    image: php:8.3-apache
+    container_name: wipawee_quiz
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    restart: unless-stopped
