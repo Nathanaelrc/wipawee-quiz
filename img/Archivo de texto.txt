@@ -1,39 +1,16 @@
-<?php
-/**
- * api.php — Endpoint del mensaje final.
- */
+quiero mejorar la visual, hacerlo mas moderno y tambien agregar mas caracteristicas, quiero cambiar las preguntas por nuevas
+1. preguntar como:
+a. cuantos años vamos a cumplir en julio del 2026. 2 años.
+b. que es lo que mas me gusta de nuestras llamadas. escuchar tu vox y ver tu sonrisa y escuchar lo que dices.
+c. que hombro me duele en invierno. Izquierdo.
+d. que comida no puedo comer, Cebollas.
+e. Cual es mi carrera de estudio. ingeniero en Ciberseguridad.
+f. en que mes naci. Febrero
+g. que mas me gusta de tu personalidad.
+todo, porque eres perfecta para mi.
+h. quien es mi todo y mi prioridad ahora y en el futuro, mi hermosa princesa Ana.
 
-header('Content-Type: application/json; charset=utf-8');
-header('X-Content-Type-Options: nosniff');
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
-    exit;
-}
-
-$raw = file_get_contents('php://input');
-$input = json_decode($raw, true);
-
-if (json_last_error() !== JSON_ERROR_NONE || !isset($input['score'], $input['total'])) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Invalid request']);
-    exit;
-}
-
-$score = (int) $input['score'];
-$totalEnviado = (int) $input['total'];
-
-$totalEsperado = 8;
-$porcentajeMinimo = 0.8;
-
-if ($totalEnviado !== $totalEsperado || ($score / $totalEsperado) < $porcentajeMinimo) {
-    echo json_encode(['success' => false, 'message' => null]);
-    exit;
-}
-
-$mensajeAmor = <<<'TEXT'
-Wipawee, my love,
+esas preguntas agrega, y ademas voy a subir una imagen para que puedan hacerla como un puzle de imagen que ella pueda completar, estan dentro de la carpeta /img del proyecto, y ademas borra las preguntas que tenia desde antes y solo agrega las que puse recien, y tambien haz las animaciones mas bonitas y romanticas y que al final cuando logre completar todo se muestre una carta "Wipawee, my love,
 
 I’ve been thinking a lot today about how it’s already been 1 year and 9 months since we started this. 21 months might just be a number to some, but to me, it represents the best chapter of my life so far. I mean it from the bottom of my heart: you are truly the best thing that has ever happened to me.
 
@@ -47,12 +24,4 @@ Thank you for being mine and for these amazing 21 months. I love you more than I
 
 Happy anniversary, my princess.
 
-Always yours, Natha
-TEXT;
-
-$mensajeSeguro = nl2br(htmlspecialchars($mensajeAmor, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
-
-echo json_encode([
-    'success' => true,
-    'message' => $mensajeSeguro,
-]);
+Always yours, Natha"

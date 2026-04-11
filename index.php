@@ -1,748 +1,1045 @@
 <?php
 /**
- * index.php — Quiz de Trivia Romántica
- *
- * ✏️  PERSONALIZACIÓN RÁPIDA:
- *   1. Edita el array `preguntas` en el JS (busca "PERSONALIZA TUS PREGUNTAS").
- *   2. Edita el mensaje de amor en api.php.
- *   3. Cambia el nombre en la pantalla de inicio si lo deseas.
+ * index.php — Quiz romántico + puzzle de imagen.
  */
+
+$imagenesPuzzle = [];
+$imgDir = __DIR__ . '/img';
+
+if (is_dir($imgDir)) {
+    $patrones = ['*.png', '*.jpg', '*.jpeg', '*.webp', '*.gif'];
+    foreach ($patrones as $patron) {
+        foreach (glob($imgDir . '/' . $patron) ?: [] as $archivo) {
+            $imagenesPuzzle[] = 'img/' . basename($archivo);
+        }
+    }
+    sort($imagenesPuzzle);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How well do you know me? 💕</title>
+    <title>Our Love Story</title>
 
-    <!-- ── Bootstrap 5 ───────────────────────────────────────── -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- ── Tailwind CSS ──────────────────────────────────────── -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        rosa:       '#f43f5e',
-                        'rosa-mid': '#fb7185',
-                        'rosa-pal': '#fda4af',
-                        dorado:     '#f59e0b',
-                        crema:      '#fffbeb',
-                    },
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
-                        sans:  ['"Lato"', 'sans-serif'],
-                    },
-                    backdropBlur: { md: '12px' },
-                }
-            }
-        }
-    </script>
-
-    <!-- ── Google Fonts ──────────────────────────────────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-
-    <!-- ── canvas-confetti ───────────────────────────────────── -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* ─── Variables ─────────────────────────────────────── */
         :root {
-            --rosa:    #f43f5e;
-            --dorado:  #f59e0b;
+            --rose-1: #f43f5e;
+            --rose-2: #e11d48;
+            --peach: #fb7185;
+            --gold: #f59e0b;
+            --ink: #23132b;
+            --card: rgba(255, 255, 255, 0.8);
         }
 
-        /* ─── Base ───────────────────────────────────────────── */
         body {
-            font-family: 'Lato', sans-serif;
-            background: linear-gradient(145deg, #fff1f2 0%, #fce7f3 55%, #fef3c7 100%);
+            font-family: 'Manrope', sans-serif;
             min-height: 100vh;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 10% 8%, rgba(251, 113, 133, 0.42), transparent 34%),
+                radial-gradient(circle at 90% 20%, rgba(245, 158, 11, 0.22), transparent 40%),
+                radial-gradient(circle at 30% 85%, rgba(244, 63, 94, 0.22), transparent 34%),
+                linear-gradient(130deg, #fff6fb 0%, #fff0f6 48%, #fff7e9 100%);
+            overflow-x: hidden;
         }
-        .playfair { font-family: 'Playfair Display', serif; }
 
-        /* ─── Glassmorphism card ─────────────────────────────── */
-        .card-quiz {
-            background: rgba(255, 255, 255, 0.82);
+        .font-title {
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 0.02em;
+        }
+
+        .aurora {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(36px);
+            opacity: 0.48;
+            animation: drift 14s ease-in-out infinite;
+        }
+
+        .blob.one {
+            width: 240px;
+            height: 240px;
+            border-radius: 52% 48% 57% 43%;
+            background: rgba(244, 63, 94, 0.28);
+            top: -30px;
+            left: -30px;
+        }
+
+        .blob.two {
+            width: 280px;
+            height: 280px;
+            border-radius: 61% 39% 38% 62%;
+            background: rgba(251, 146, 60, 0.24);
+            right: -80px;
+            top: 25%;
+            animation-delay: 1.1s;
+        }
+
+        .blob.three {
+            width: 250px;
+            height: 250px;
+            border-radius: 36% 64% 65% 35%;
+            background: rgba(244, 63, 94, 0.25);
+            left: 18%;
+            bottom: -90px;
+            animation-delay: 2.2s;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-14px) scale(1.05); }
+        }
+
+        .spark {
+            position: absolute;
+            animation: floatUp 4.8s ease-in-out infinite;
+            opacity: 0.18;
+        }
+
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
+            50% { transform: translateY(-14px) rotate(8deg); opacity: 0.28; }
+        }
+
+        .card-romantic {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            border-radius: 1.25rem;
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.65);
+            box-shadow: 0 20px 46px rgba(66, 25, 52, 0.12);
         }
 
-        /* ─── Fade-in ────────────────────────────────────────── */
         .fade-in {
-            animation: fadeIn 0.55s cubic-bezier(.4,0,.2,1) both;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(18px); }
-            to   { opacity: 1; transform: translateY(0); }
+            animation: fadeIn 0.65s cubic-bezier(.21,.81,.35,1) both;
         }
 
-        /* ─── Slide question ─────────────────────────────────── */
         .slide-in {
-            animation: slideIn 0.45s cubic-bezier(.4,0,.2,1) both;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(30px); }
-            to   { opacity: 1; transform: translateX(0); }
+            animation: slideIn 0.5s cubic-bezier(.21,.81,.35,1) both;
         }
 
-        /* ─── Shake (respuesta incorrecta) ───────────────────── */
         .shake {
-            animation: shake 0.48s ease both;
+            animation: shake 0.46s ease both;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(22px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         @keyframes shake {
-            0%,100% { transform: translateX(0); }
-            18%     { transform: translateX(-9px); }
-            36%     { transform: translateX(9px); }
-            54%     { transform: translateX(-6px); }
-            72%     { transform: translateX(6px); }
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            45% { transform: translateX(8px); }
+            70% { transform: translateX(-5px); }
         }
 
-        /* ─── Pulse (score al acertar) ───────────────────────── */
-        .pulse-once {
-            animation: pulseOnce 0.5s ease both;
-        }
-        @keyframes pulseOnce {
-            0%   { transform: scale(1); }
-            40%  { transform: scale(1.28); }
-            70%  { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* ─── Floating hearts (decoración) ───────────────────── */
-        .floating { animation: floatHeart 3.2s ease-in-out infinite; }
-        @keyframes floatHeart {
-            0%,100% { transform: translateY(0) rotate(-4deg); }
-            50%     { transform: translateY(-12px) rotate(4deg); }
+        .btn-love {
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 0.85rem 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--rose-1), var(--peach));
+            box-shadow: 0 12px 26px rgba(244, 63, 94, 0.33);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        /* ─── Progress bar ───────────────────────────────────── */
-        .progress-bar-rosa {
-            background: linear-gradient(90deg, var(--rosa), #fb923c);
-            transition: width 0.55s cubic-bezier(.4,0,.2,1);
-        }
-
-        /* ─── Botón de respuesta ─────────────────────────────── */
-        .btn-respuesta {
-            background: rgba(255, 255, 255, 0.72);
-            border: 1.5px solid rgba(244, 63, 94, 0.22);
-            color: #374151;
-            font-size: 0.93rem;
-            text-align: left;
-            border-radius: 0.65rem;
-            padding: 0.75rem 1.1rem;
-            transition: all 0.22s ease;
-            cursor: pointer;
-            width: 100%;
-        }
-        .btn-respuesta:hover:not(:disabled) {
-            background: linear-gradient(135deg, rgba(244,63,94,0.07), rgba(251,113,133,0.07));
-            border-color: var(--rosa);
-            color: #be185d;
+        .btn-love:hover {
+            color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(244,63,94,0.18);
+            box-shadow: 0 16px 34px rgba(244, 63, 94, 0.4);
         }
-        .btn-respuesta:disabled { cursor: default; }
+
+        .btn-gold {
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 0.8rem 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            box-shadow: 0 10px 24px rgba(245, 158, 11, 0.35);
+        }
+
+        .audio-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 30;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #a5164d;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 0.55rem 0.95rem;
+            box-shadow: 0 10px 20px rgba(66, 25, 52, 0.14);
+        }
+
+        .audio-toggle:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+        }
+
+        .progress-shell {
+            background: rgba(244, 63, 94, 0.1);
+            border-radius: 999px;
+            overflow: hidden;
+            height: 8px;
+        }
+
+        .progress-love {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #f43f5e, #fb7185, #f59e0b);
+            transition: width 0.5s cubic-bezier(.21,.81,.35,1);
+        }
+
+        .btn-respuesta {
+            width: 100%;
+            border-radius: 0.85rem;
+            border: 1px solid rgba(244, 63, 94, 0.22);
+            padding: 0.82rem 1rem;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.74);
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-respuesta:hover:not(:disabled) {
+            transform: translateY(-1px);
+            border-color: var(--rose-1);
+            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.14);
+        }
+
+        .btn-respuesta:disabled {
+            cursor: default;
+        }
+
         .btn-respuesta.correcta {
             background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
             border-color: #10b981 !important;
-            color: #064e3b !important;
-            box-shadow: 0 4px 14px rgba(16,185,129,0.25) !important;
+            color: #064e3b;
         }
+
         .btn-respuesta.incorrecta {
             background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
             border-color: #ef4444 !important;
-            color: #7f1d1d !important;
+            color: #7f1d1d;
         }
 
-        /* ─── Pergamino / carta de amor ──────────────────────── */
-        .pergamino {
-            background: linear-gradient(145deg,
-                rgba(255,255,255,0.93) 0%,
-                rgba(255,249,219,0.93) 100%);
-            border: 2px solid rgba(245,158,11,0.38);
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+
+        .puzzle-tile {
+            aspect-ratio: 1 / 1;
+            border-radius: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 18px rgba(17, 24, 39, 0.17);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-color: #f6f6f6;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .puzzle-tile:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 12px 22px rgba(17, 24, 39, 0.24);
+        }
+
+        .puzzle-tile.selected {
+            outline: 3px solid rgba(244, 63, 94, 0.72);
+            transform: scale(1.02);
+        }
+
+        .puzzle-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            font-size: clamp(0.9rem, 3vw, 1.3rem);
+            text-shadow: 0 1px 4px rgba(17, 24, 39, 0.35);
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+        }
+
+        .letter {
+            background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,248,232,0.92));
+            border: 2px solid rgba(245, 158, 11, 0.36);
             position: relative;
             overflow: hidden;
         }
-        .pergamino::before {
+
+        .letter::before {
             content: '';
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse at 10% 10%,  rgba(245,158,11,0.08) 0%, transparent 55%),
-                radial-gradient(ellipse at 90% 90%,  rgba(244,63,94,0.06)  0%, transparent 55%);
+                radial-gradient(circle at 15% 12%, rgba(244,63,94,0.1), transparent 42%),
+                radial-gradient(circle at 88% 88%, rgba(245,158,11,0.12), transparent 44%);
             pointer-events: none;
         }
-        .pergamino-orla {
-            border-top: 1px dashed rgba(245,158,11,0.4);
-            border-bottom: 1px dashed rgba(245,158,11,0.4);
+
+        .letter-reveal {
+            opacity: 0;
+            transform: scale(0.96) translateY(12px);
+            transition: all 0.72s ease;
         }
 
-        /* ─── Reveal animation ───────────────────────────────── */
-        .reveal {
-            opacity: 0;
-            transform: scale(0.94) translateY(12px);
-            transition: opacity 0.75s ease, transform 0.75s ease;
-        }
-        .reveal.visible {
+        .letter-reveal.visible {
             opacity: 1;
             transform: scale(1) translateY(0);
         }
 
-        /* ─── Botón primario ─────────────────────────────────── */
-        .btn-rosa {
-            background: linear-gradient(135deg, #f43f5e, #fb7185);
-            border: none;
-            color: #fff;
-            box-shadow: 0 5px 22px rgba(244,63,94,0.38);
-            transition: all 0.22s ease;
-        }
-        .btn-rosa:hover {
-            background: linear-gradient(135deg, #e11d48, #f43f5e);
-            box-shadow: 0 8px 28px rgba(244,63,94,0.5);
-            transform: translateY(-1px);
-            color: #fff;
-        }
-        .btn-dorado {
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-            border: none;
-            color: #fff;
-            box-shadow: 0 5px 22px rgba(245,158,11,0.35);
-            transition: all 0.22s ease;
-        }
-        .btn-dorado:hover {
-            background: linear-gradient(135deg, #d97706, #f59e0b);
-            box-shadow: 0 8px 28px rgba(245,158,11,0.5);
-            transform: translateY(-1px);
-            color: #fff;
+        @media (max-width: 576px) {
+            .puzzle-board {
+                gap: 6px;
+            }
         }
     </style>
 </head>
 
-<body class="d-flex flex-column align-items-center justify-content-center py-4" style="min-height:100vh;">
+<body class="d-flex align-items-center justify-content-center py-4">
+    <button id="btn-audio" class="audio-toggle" type="button" aria-pressed="false">🔇 Music: Off</button>
 
-    <!-- ════════ Corazones flotantes de fondo ════════ -->
-    <div class="position-fixed top-0 start-0 w-100 h-100 overflow-hidden" style="pointer-events:none; z-index:0;">
-        <span class="position-absolute floating" style="top:7%;  left:4%;  font-size:1.6rem; opacity:.13; animation-delay:0s    ">💗</span>
-        <span class="position-absolute floating" style="top:13%; right:6%; font-size:2.1rem; opacity:.10; animation-delay:.9s   ">💕</span>
-        <span class="position-absolute floating" style="top:55%; left:2%;  font-size:1.3rem; opacity:.14; animation-delay:1.6s  ">🌸</span>
-        <span class="position-absolute floating" style="top:72%; right:4%; font-size:1.9rem; opacity:.10; animation-delay:.5s   ">💖</span>
-        <span class="position-absolute floating" style="bottom:9%;left:13%;font-size:1.1rem; opacity:.12; animation-delay:2.1s  ">✨</span>
-        <span class="position-absolute floating" style="top:38%; right:2%;  font-size:1.5rem; opacity:.09; animation-delay:1.3s ">🌹</span>
-        <span class="position-absolute floating" style="top:85%; left:40%; font-size:1.2rem; opacity:.10; animation-delay:0.7s  ">💗</span>
+    <div class="aurora">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+
+        <span class="spark" style="top:10%;left:7%;font-size:1.3rem;animation-delay:.2s;">✨</span>
+        <span class="spark" style="top:17%;right:8%;font-size:1.8rem;animation-delay:1.1s;">💗</span>
+        <span class="spark" style="top:72%;left:6%;font-size:1.1rem;animation-delay:2s;">🌸</span>
+        <span class="spark" style="top:82%;right:13%;font-size:1.4rem;animation-delay:.7s;">💕</span>
     </div>
 
-    <!-- ════════ Contenedor principal ════════ -->
-    <div class="container py-2" style="position:relative; z-index:1; max-width:600px;">
-
-
-        <!-- ══════════════════════════════════════════════════ -->
-        <!--  PANTALLA INICIO                                  -->
-        <!-- ══════════════════════════════════════════════════ -->
-        <div id="screen-inicio" class="card-quiz rounded-4 shadow-lg p-4 p-md-5 text-center fade-in">
-
-            <div class="mb-3" style="font-size:3.6rem; line-height:1;">💌</div>
-
-            <h1 class="playfair fw-bold mb-2" style="color:#be185d; font-size:clamp(1.65rem,5.5vw,2.25rem);">
-                How well do you know me?
+    <div class="container" style="max-width: 650px; position: relative; z-index: 2;">
+        <div id="screen-inicio" class="card-romantic p-4 p-md-5 text-center fade-in">
+            <div style="font-size: 3.4rem; line-height:1;">💌</div>
+            <h1 class="font-title fw-bold mb-2" style="font-size: clamp(1.9rem, 6vw, 2.6rem); color: #a5164d;">
+                Our Story, Question by Question
             </h1>
-            <p class="text-muted mb-4 mx-auto" style="font-size:.93rem; max-width:360px; line-height:1.7;">
-                A little romantic quiz made with all my love.<br>
-                Answer the <strong>9 questions</strong> and unlock your special gift. 🌹
+            <p class="mx-auto text-secondary mb-4" style="max-width: 480px; line-height: 1.75;">
+                Answer the <strong>8 new questions</strong>, beat the puzzle challenge with our photos,
+                and unlock your final anniversary letter. 💖
             </p>
 
-            <!-- Estadísticas decorativas -->
-            <div class="d-flex justify-content-center gap-5 mb-4">
-                <div class="text-center">
-                    <div class="fw-bold" style="color:#f43f5e; font-size:1.6rem;">9</div>
-                    <div class="text-muted" style="font-size:.73rem; text-transform:uppercase; letter-spacing:.05em;">Questions</div>
+            <div class="d-flex justify-content-center gap-4 gap-md-5 mb-4 flex-wrap">
+                <div>
+                    <div class="fw-bold" style="color:#f43f5e; font-size:1.5rem;">8</div>
+                    <small class="text-uppercase text-secondary" style="letter-spacing:.08em;">Questions</small>
                 </div>
-                <div class="vr"></div>
-                <div class="text-center">
-                    <div style="font-size:1.6rem;">💝</div>
-                    <div class="text-muted" style="font-size:.73rem; text-transform:uppercase; letter-spacing:.05em;">Prize</div>
+                <div>
+                    <div class="fw-bold" style="color:#f59e0b; font-size:1.5rem;">1</div>
+                    <small class="text-uppercase text-secondary" style="letter-spacing:.08em;">Puzzle</small>
                 </div>
-                <div class="vr"></div>
-                <div class="text-center">
-                    <div class="fw-bold" style="color:#f43f5e; font-size:1.6rem;">∞</div>
-                    <div class="text-muted" style="font-size:.73rem; text-transform:uppercase; letter-spacing:.05em;">Love</div>
+                <div>
+                    <div class="fw-bold" style="color:#f43f5e; font-size:1.5rem;">∞</div>
+                    <small class="text-uppercase text-secondary" style="letter-spacing:.08em;">Love</small>
                 </div>
             </div>
 
-            <button id="btn-iniciar" class="btn btn-rosa btn-lg px-5 py-3 rounded-pill fw-semibold">
-                Start the Quiz! 💕
-            </button>
-
-            <p class="mt-3 mb-0" style="font-size:.75rem; color:#d1a3b0;">
-                Made with ♥ especially for you
-            </p>
+            <button id="btn-iniciar" class="btn btn-love">Start Experience 💕</button>
         </div>
 
-
-        <!-- ══════════════════════════════════════════════════ -->
-        <!--  PANTALLA QUIZ                                    -->
-        <!-- ══════════════════════════════════════════════════ -->
         <div id="screen-quiz" class="d-none">
-
-            <!-- Header + score -->
-            <div class="d-flex justify-content-between align-items-center mb-3 px-1">
-                <span class="badge rounded-pill px-3 py-2"
-                      style="background:rgba(244,63,94,.12); color:#be185d; font-size:.82rem;">
-                    💕 Romantic Quiz
-                </span>
-                <span id="label-score" class="badge rounded-pill px-3 py-2"
-                      style="background:rgba(245,158,11,.12); color:#b45309; font-size:.82rem;">
-                    ⭐ 0 / 9
-                </span>
+            <div class="d-flex justify-content-between align-items-center mb-3 px-1 flex-wrap gap-2">
+                <span class="badge rounded-pill px-3 py-2" style="background:rgba(244,63,94,.12); color:#a5164d;">💞 para mi hermosa Wipawee</span>
+                <span id="label-score" class="badge rounded-pill px-3 py-2" style="background:rgba(245,158,11,.12); color:#a16207;">⭐ 0 / 8</span>
             </div>
 
-            <!-- Barra de progreso -->
-            <div class="progress mb-4 rounded-pill" style="height:7px; background:rgba(244,63,94,.12);">
-                <div id="barra-progreso" class="progress-bar-rosa rounded-pill h-100" style="width:0%;"></div>
+            <div class="progress-shell mb-4">
+                <div id="barra-progreso" class="progress-love"></div>
             </div>
 
-            <!-- Tarjeta de pregunta -->
-            <div id="tarjeta-pregunta" class="card-quiz rounded-4 shadow-lg p-4 p-md-5">
-
-                <!-- Número de pregunta -->
+            <div id="tarjeta-pregunta" class="card-romantic p-4 p-md-5">
                 <div class="d-flex align-items-center gap-2 mb-3">
-                    <div id="num-pregunta"
-                         class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0"
-                         style="width:38px; height:38px; background:linear-gradient(135deg,#f43f5e,#fb7185); font-size:.9rem;">
-                        1
-                    </div>
-                    <span class="text-muted" style="font-size:.8rem;">of 9 questions</span>
+                    <div id="num-pregunta" class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width:38px;height:38px;background:linear-gradient(135deg,#f43f5e,#fb7185);">1</div>
+                    <span id="meta-preguntas" class="text-secondary" style="font-size:.85rem;">Question 1 of 8</span>
                 </div>
 
-                <!-- Texto de la pregunta -->
-                <h2 id="texto-pregunta"
-                    class="playfair fw-bold mb-4"
-                    style="color:#1c1c2e; font-size:clamp(1.05rem,3.8vw,1.3rem); line-height:1.55;">
-                </h2>
-
-                <!-- Opciones de respuesta -->
+                <h2 id="texto-pregunta" class="font-title fw-bold mb-4" style="font-size: clamp(1.2rem, 4vw, 1.45rem); line-height:1.5;"></h2>
                 <div id="contenedor-opciones" class="d-grid gap-3"></div>
 
-                <!-- Feedback inline -->
-                <div id="feedback"
-                     class="mt-3 text-center fw-semibold"
-                     style="min-height:26px; font-size:.92rem; opacity:0; transition:opacity .3s ease;">
-                </div>
+                <div id="feedback" class="mt-3 text-center fw-semibold" style="min-height:26px; opacity:0; transition: opacity .25s ease;"></div>
             </div>
         </div>
 
+        <div id="screen-puzzle" class="d-none text-center">
+            <div class="card-romantic p-4 p-md-5 fade-in">
+                <div style="font-size: 2.7rem;">🧩</div>
+                <h2 class="font-title fw-bold mb-2" style="font-size: clamp(1.6rem, 5vw, 2.1rem); color:#a5164d;">Final Challenge: Complete the Puzzle</h2>
+                <p class="text-secondary mb-3">
+                    Swap two pieces per turn until each image is reconstructed.
+                    You must complete both photos to unlock your special letter. 💘
+                </p>
 
-        <!-- ══════════════════════════════════════════════════ -->
-        <!--  PANTALLA VICTORIA                                -->
-        <!-- ══════════════════════════════════════════════════ -->
-        <div id="screen-victoria" class="d-none text-center fade-in">
+                <p id="progreso-fotos" class="fw-semibold mb-2" style="color:#a5164d;">Photo 1 of 2</p>
+                <p id="estado-puzzle" class="fw-semibold mb-3" style="color:#be185d;">Moves: 0</p>
+                <div class="d-flex justify-content-center align-items-center gap-2 mb-3 flex-wrap">
+                    <label for="puzzle-dificultad" class="fw-semibold" style="color:#a5164d;">Difficulty:</label>
+                    <select id="puzzle-dificultad" class="form-select" style="max-width: 170px;">
+                        <option value="4" selected>4x4 (classic)</option>
+                        <option value="5">5x5 (challenge)</option>
+                    </select>
+                </div>
+                <div id="puzzle-board" class="puzzle-board mb-4"></div>
+                <button id="btn-mezclar" class="btn btn-gold">Shuffle Again</button>
+            </div>
+        </div>
 
+        <div id="screen-victoria" class="d-none text-center">
             <div class="mb-2" style="font-size:3rem;">🎉</div>
-            <h2 class="playfair fw-bold mb-1" style="color:#be185d; font-size:clamp(1.5rem,5vw,2rem);">
-                You did it, my love! 🎉
-            </h2>
-            <p class="text-muted mb-4" style="font-size:.93rem;">
-                You scored <strong id="score-porcentaje" style="color:#f43f5e; font-size:1.15em;">—</strong> — Here is your special gift... 💝
-            </p>
+            <h2 class="font-title fw-bold mb-1" style="font-size: clamp(1.7rem, 5vw, 2.2rem); color:#a5164d;">You Did It, My Love</h2>
+            <p class="text-secondary mb-4">Final score: <strong id="score-porcentaje" style="color:#f43f5e;">—</strong> · Gift unlocked 💝</p>
 
-            <!-- ── Carta de amor / Pergamino ── -->
-            <div id="carta-amor"
-                 class="pergamino rounded-4 shadow-lg p-4 p-md-5 text-start mb-4 reveal">
-
-                <!-- Encabezado -->
+            <div id="carta-amor" class="letter card-romantic p-4 p-md-5 text-start mb-4 letter-reveal">
                 <div class="text-center mb-4">
                     <div style="font-size:2rem;">💌</div>
-                    <h3 class="playfair fst-italic fw-bold mt-2 mb-1"
-                        style="color:#92400e; font-size:1.25rem;">
-                        Love Letter
-                    </h3>
-                    <div class="pergamino-orla py-1 mx-auto" style="width:55%;">
-                        <span style="font-size:.85rem; color:#d97706; letter-spacing:.18em;">❧ ❧ ❧</span>
-                    </div>
+                    <h3 class="font-title fst-italic fw-bold mb-0" style="font-size: 1.3rem; color:#92400e;">Love Letter</h3>
                 </div>
-
-                <!-- Mensaje cargado por fetch() -->
-                <div id="mensaje-amor"
-                     class="playfair"
-                     style="color:#44403c; line-height:2; font-size:clamp(.93rem,3vw,1.05rem);">
-                    <!-- Insertado dinámicamente desde api.php -->
-                </div>
-
-                <div class="text-center mt-4" style="font-size:1.4rem;">
-                    💗 &nbsp; 💗 &nbsp; 💗
-                </div>
+                <div id="mensaje-amor" class="font-title" style="line-height: 2; font-size: clamp(.96rem, 3vw, 1.12rem);"></div>
             </div>
 
-            <button id="btn-rejugar"
-                    class="btn btn-dorado px-4 py-2 rounded-pill fw-semibold"
-                    style="font-size:.9rem;">
-                ♻️ Play Again
-            </button>
+            <div id="descargas-imagenes" class="card-romantic p-3 p-md-4 mb-4 d-none">
+                <h4 class="font-title fw-bold mb-2" style="color:#a5164d;">Your Photos to Download</h4>
+                <p class="text-secondary mb-3" style="font-size:.92rem;">You can save these memory photos to your device.</p>
+                <div id="lista-descargas" class="d-flex flex-wrap justify-content-center gap-2"></div>
+            </div>
+
+            <button id="btn-rejugar" class="btn btn-gold">Play Again ♻️</button>
         </div>
 
-
-        <!-- ══════════════════════════════════════════════════ -->
-        <!--  PANTALLA DERROTA                                 -->
-        <!-- ══════════════════════════════════════════════════ -->
-        <div id="screen-derrota" class="d-none text-center fade-in">
-            <div class="card-quiz rounded-4 shadow-lg p-4 p-md-5">
+        <div id="screen-derrota" class="d-none text-center">
+            <div class="card-romantic p-4 p-md-5 fade-in">
                 <div class="mb-3" style="font-size:3rem;">🥺</div>
-                <h2 class="playfair fw-bold mb-2" style="color:#be185d;">So close, my love! 💕</h2>
-                <p class="text-muted mb-4" style="font-size:.93rem;">
-                    You need at least <strong>80%</strong> to unlock the gift.<br>
-                    I believe in you — try again! 💪
+                <h2 class="font-title fw-bold mb-2" style="color:#a5164d;">One More Try, My Love</h2>
+                <p class="text-secondary mb-4">
+                    You need at least <strong>80%</strong> to reach the final puzzle.
                 </p>
-                <div class="rounded-3 p-3 mb-4"
-                     style="background:rgba(244,63,94,.07); border:1px solid rgba(244,63,94,.18);">
-                    <span class="fw-semibold" style="color:#be185d;">
-                        Your score:&ensp;<span id="puntaje-final">0</span> / 9
-                        &nbsp;·&nbsp;
-                        <span id="porcentaje-final" style="font-size:1.1em;">0%</span> ⭐
-                    </span>
+                <div class="rounded-3 p-3 mb-4" style="background:rgba(244,63,94,.08); border:1px solid rgba(244,63,94,.18);">
+                    <span class="fw-semibold" style="color:#a5164d;">Your score: <span id="puntaje-final">0</span> / 8 · <span id="porcentaje-final">0%</span></span>
                 </div>
-                <button id="btn-reintentar"
-                        class="btn btn-rosa btn-lg px-5 py-3 rounded-pill fw-semibold">
-                    Try Again 🌸
-                </button>
+                <button id="btn-reintentar" class="btn btn-love">Try Again 🌸</button>
             </div>
         </div>
+    </div>
 
-    </div><!-- /container -->
-
-
-    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-    /* ============================================================== */
-    /*  QUIZ DE TRIVIA ROMÁNTICA                                       */
-    /*  ✏️  Personaliza las preguntas en el array `preguntas`          */
-    /*     y el mensaje de amor en api.php                            */
-    /* ============================================================== */
+    const IMAGENES_PUZZLE = <?php echo json_encode($imagenesPuzzle, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
 
-    const TOTAL = 9;
-
-    /* ──────────────────────────────────────────────────────────── */
-    /*  ✏️  PERSONALIZA TUS PREGUNTAS                               */
-    /*  · "correcta" es el índice (0-3) de la respuesta correcta.  */
-    /* ──────────────────────────────────────────────────────────── */
     const preguntas = [
         {
-            pregunta: 'When is my birthday? 🎂',
-            opciones:  ['January 7, 1995', 'February 7, 1995', 'March 7, 1995', 'February 17, 1995'],
-            correcta:  1   // ← February 7, 1995
+            pregunta: 'a) How many years together will we celebrate in July 2026?',
+            opciones: ['1 year', '2 years', '3 years', '4 years'],
+            correcta: 1
         },
         {
-            pregunta: 'What is my full name? 😊',
-            opciones:  ['Marcos Antonio Rodríguez', 'Marcos Daniel Rodríguez Cerda', 'Marcos Nathanael Rodríguez Cerda', 'Marcos Nathanael García Cerda'],
-            correcta:  2   // ← Marcos Nathanael Rodríguez Cerda
+            pregunta: 'b) What do I love most about our calls?',
+            opciones: [
+                'Only seeing you on camera',
+                'Hearing your voice, seeing your smile, and listening to what you say',
+                'Talking about work',
+                'Keeping them short'
+            ],
+            correcta: 1
         },
         {
-            pregunta: 'How old am I? 🎉',
-            opciones:  ['29 years old', '30 years old', '31 years old', '32 years old'],
-            correcta:  2   // ← 31
+            pregunta: 'c) Which shoulder hurts me in winter?',
+            opciones: ['Right', 'Left', 'Both', 'None'],
+            correcta: 1
         },
         {
-            pregunta: 'When did we officially become a couple? 💑',
-            opciones:  ['June 10, 2024', 'August 10, 2024', 'July 1, 2024', 'July 10, 2024'],
-            correcta:  3   // ← July 10, 2024
+            pregunta: 'd) Which food can I not eat?',
+            opciones: ['Tomatoes', 'Garlic', 'Onions', 'Peppers'],
+            correcta: 2
         },
         {
-            pregunta: 'What special nickname do I call you with the most love? 💕',
-            opciones:  ['My Sky', 'My Love', 'Princess', 'Queen'],
-            correcta:  2   // ← Princess 👸
+            pregunta: 'e) What is my field of study?',
+            opciones: ['Civil Engineering', 'Cybersecurity Engineering', 'Digital Design', 'Medicine'],
+            correcta: 1
         },
         {
-            pregunta: 'What is my favorite color? 🎨',
-            opciones:  ['Red', 'Green', 'Blue', 'Black'],
-            correcta:  2   // ← Blue
+            pregunta: 'f) In which month was I born?',
+            opciones: ['January', 'February', 'March', 'April'],
+            correcta: 1
         },
         {
-            pregunta: 'What do I love the most about your face? 😍',
-            opciones:  ['Your lips', 'Your eyes and smile', 'Your nose', 'Everything equally'],
-            correcta:  1   // ← Eyes and smile
+            pregunta: 'g) What do I love most about your personality?',
+            opciones: [
+                'The way you speak',
+                'Your intelligence',
+                'Everything, because you are perfect for me',
+                'Your patience'
+            ],
+            correcta: 2
         },
         {
-            pregunta: 'Who is the most important person in my life? 💖',
-            opciones:  ['My family', 'My best friend', 'My boss', 'You'],
-            correcta:  3   // ← Her (You)
-        },
-        {
-            pregunta: 'What type of music gets me in a good mood? 🎵',
-            opciones:  ['Rock & Metal', 'Classical & Jazz', 'Rap & Pop', 'Reggaeton & Salsa'],
-            correcta:  2   // ← Rap-Pop
+            pregunta: 'h) Who is my everything and my priority now and in the future?',
+            opciones: ['My work', 'My family', 'My goals', 'My beautiful princess Ana'],
+            correcta: 3
         }
     ];
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Estado del quiz                                             */
-    /* ──────────────────────────────────────────────────────────── */
-    let indice    = 0;
-    let puntaje   = 0;
+    const TOTAL = preguntas.length;
+    const PASSING_SCORE = 80;
+    let puzzleSize = 4;
+
+    let indice = 0;
+    let puntaje = 0;
     let respondido = false;
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Referencias DOM                                             */
-    /* ──────────────────────────────────────────────────────────── */
+    let puzzleOrden = [];
+    let puzzleSeleccionado = null;
+    let puzzleMovimientos = 0;
+    let puzzleBloqueado = false;
+    let imagenPuzzleActual = '';
+    let puzzleImagenesReto = [];
+    let puzzleFotoActual = 0;
+    let puzzleMovimientosTotales = 0;
+
     const $ = id => document.getElementById(id);
 
-    const pantallaInicio    = $('screen-inicio');
-    const pantallaQuiz      = $('screen-quiz');
-    const pantallaVictoria  = $('screen-victoria');
-    const pantallaDerrota   = $('screen-derrota');
+    const pantallas = [
+        $('screen-inicio'),
+        $('screen-quiz'),
+        $('screen-puzzle'),
+        $('screen-victoria'),
+        $('screen-derrota')
+    ];
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Audio: Web Audio API (sin archivos externos)               */
-    /* ──────────────────────────────────────────────────────────── */
+    let audioCtx = null;
+    let bgmMaster = null;
+    let bgmMuted = true;
+
+    function getPuzzleSize() {
+        const size = Number.parseInt($('puzzle-dificultad').value, 10);
+        return size === 5 ? 5 : 4;
+    }
+
+    function prepararRetoPuzzle() {
+        const candidatas = Array.isArray(IMAGENES_PUZZLE) ? IMAGENES_PUZZLE.slice(0, 2) : [];
+        puzzleImagenesReto = candidatas.length > 0 ? candidatas : [''];
+        puzzleFotoActual = 0;
+        puzzleMovimientosTotales = 0;
+    }
+
+    function actualizarInfoPuzzle() {
+        const totalFotos = puzzleImagenesReto.length;
+        $('progreso-fotos').textContent = `Photo ${Math.min(puzzleFotoActual + 1, totalFotos)} of ${totalFotos}`;
+        $('estado-puzzle').textContent = `Moves: ${puzzleMovimientos}`;
+    }
+
+    function renderizarDescargasImagenes() {
+        const panel = $('descargas-imagenes');
+        const lista = $('lista-descargas');
+        lista.innerHTML = '';
+
+        if (!Array.isArray(IMAGENES_PUZZLE) || IMAGENES_PUZZLE.length === 0) {
+            panel.classList.add('d-none');
+            return;
+        }
+
+        IMAGENES_PUZZLE.forEach((ruta, idx) => {
+            const enlace = document.createElement('a');
+            const nombre = ruta.split('/').pop() || `foto-${idx + 1}.png`;
+            enlace.href = ruta;
+            enlace.download = nombre;
+            enlace.className = 'btn btn-love';
+            enlace.style.padding = '0.55rem 1.1rem';
+            enlace.style.fontSize = '0.82rem';
+            enlace.textContent = `Download photo ${idx + 1}`;
+            lista.appendChild(enlace);
+        });
+
+        panel.classList.remove('d-none');
+    }
+
+    function updateAudioButton() {
+        const btn = $('btn-audio');
+        btn.textContent = bgmMuted ? '🔇 Music: Off' : '🔊 Music: On';
+        btn.setAttribute('aria-pressed', String(!bgmMuted));
+    }
+
+    function iniciarMusicaFondo() {
+        if (audioCtx) return;
+
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+
+        audioCtx = new Ctx();
+        bgmMaster = audioCtx.createGain();
+        bgmMaster.gain.value = 0;
+
+        const masterFilter = audioCtx.createBiquadFilter();
+        masterFilter.type = 'lowpass';
+        masterFilter.frequency.value = 1800;
+
+        const masterCompressor = audioCtx.createDynamicsCompressor();
+        masterCompressor.threshold.value = -24;
+        masterCompressor.knee.value = 15;
+        masterCompressor.ratio.value = 3;
+
+        masterFilter.connect(masterCompressor);
+        masterCompressor.connect(bgmMaster);
+        bgmMaster.connect(audioCtx.destination);
+
+        const nota = semitonos => 220 * Math.pow(2, semitonos / 12);
+
+        function tocarNota(freq, duracion, tiempo, tipo, volumen) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filtro = audioCtx.createBiquadFilter();
+
+            osc.type = tipo;
+            osc.frequency.setValueAtTime(freq, tiempo);
+
+            filtro.type = 'lowpass';
+            filtro.frequency.setValueAtTime(2200, tiempo);
+
+            gain.gain.setValueAtTime(0.0001, tiempo);
+            gain.gain.exponentialRampToValueAtTime(volumen, tiempo + 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.0001, tiempo + duracion);
+
+            osc.connect(filtro);
+            filtro.connect(gain);
+            gain.connect(masterFilter);
+
+            osc.start(tiempo);
+            osc.stop(tiempo + duracion + 0.03);
+        }
+
+        const melodia = [
+            7, 9, 10, 9, 7, 5, 4, 2,
+            4, 5, 7, 9, 10, 9, 7, 5
+        ];
+        const bajos = [0, 5, 7, 4];
+
+        const tempo = 78;
+        const negra = 60 / tempo;
+        const compas = negra * 4;
+
+        let compasActual = 0;
+        setInterval(() => {
+            if (!audioCtx) return;
+            const inicio = audioCtx.currentTime + 0.05;
+
+            const bajo = nota(-12 + bajos[compasActual % bajos.length]);
+            tocarNota(bajo, compas * 0.96, inicio, 'sine', 0.05);
+
+            const triadaBase = bajos[compasActual % bajos.length];
+            const tercera = triadaBase + 4;
+            const quinta = triadaBase + 7;
+            tocarNota(nota(triadaBase), compas * 0.9, inicio, 'triangle', 0.018);
+            tocarNota(nota(tercera), compas * 0.9, inicio + negra * 0.06, 'triangle', 0.015);
+            tocarNota(nota(quinta), compas * 0.9, inicio + negra * 0.12, 'triangle', 0.015);
+
+            for (let i = 0; i < 4; i++) {
+                const idx = (compasActual * 4 + i) % melodia.length;
+                const freq = nota(melodia[idx]);
+                const t = inicio + i * negra;
+                tocarNota(freq, negra * 0.86, t, 'sine', 0.045);
+            }
+
+            compasActual++;
+        }, compas * 1000);
+    }
+
+    async function activarMusica() {
+        iniciarMusicaFondo();
+        if (!audioCtx || !bgmMaster) return;
+        if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+        }
+        bgmMuted = false;
+        bgmMaster.gain.setTargetAtTime(0.08, audioCtx.currentTime, 0.5);
+        updateAudioButton();
+    }
+
+    async function alternarMusica() {
+        iniciarMusicaFondo();
+        if (!audioCtx || !bgmMaster) return;
+
+        if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+        }
+
+        bgmMuted = !bgmMuted;
+        const target = bgmMuted ? 0 : 0.08;
+        bgmMaster.gain.setTargetAtTime(target, audioCtx.currentTime, 0.25);
+        updateAudioButton();
+    }
+
     function reproducirAcierto() {
         try {
-            const ctx   = new (window.AudioContext || window.webkitAudioContext)();
-            const notas = [523.25, 659.25, 783.99]; // Do5, Mi5, Sol5
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const notas = [523.25, 659.25, 783.99];
             notas.forEach((freq, i) => {
-                const osc  = ctx.createOscillator();
+                const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.type = 'sine';
-                const t = ctx.currentTime + i * 0.13;
+                const t = ctx.currentTime + i * 0.12;
                 osc.frequency.setValueAtTime(freq, t);
-                gain.gain.setValueAtTime(0.18, t);
-                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+                gain.gain.setValueAtTime(0.16, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
                 osc.start(t);
-                osc.stop(t + 0.38);
+                osc.stop(t + 0.35);
             });
-        } catch { /* Audio no disponible */ }
+        } catch (_) {}
     }
 
     function reproducirError() {
         try {
-            const ctx  = new (window.AudioContext || window.webkitAudioContext)();
-            const osc  = ctx.createOscillator();
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.connect(gain);
             gain.connect(ctx.destination);
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(200, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAlTime?.(80, ctx.currentTime + 0.32);
-            osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.32);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(220, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(95, ctx.currentTime + 0.28);
             gain.gain.setValueAtTime(0.09, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
             osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.32);
-        } catch { /* Audio no disponible */ }
+            osc.stop(ctx.currentTime + 0.28);
+        } catch (_) {}
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Confetti 🎊                                                 */
-    /* ──────────────────────────────────────────────────────────── */
     function lanzarConfetti() {
-        const colores = ['#f43f5e', '#fb7185', '#fbbf24', '#f59e0b', '#ffffff', '#fda4af'];
-        const fin = Date.now() + 3200;
+        const colores = ['#f43f5e', '#fb7185', '#f59e0b', '#fbbf24', '#ffffff'];
+        const fin = Date.now() + 2300;
         (function rafLoop() {
-            confetti({ particleCount:5, angle:60,  spread:58, origin:{x:0}, colors:colores, scalar:1.15 });
-            confetti({ particleCount:5, angle:120, spread:58, origin:{x:1}, colors:colores, scalar:1.15 });
+            confetti({ particleCount: 4, angle: 60, spread: 58, origin: { x: 0 }, colors: colores, scalar: 1.08 });
+            confetti({ particleCount: 4, angle: 120, spread: 58, origin: { x: 1 }, colors: colores, scalar: 1.08 });
             if (Date.now() < fin) requestAnimationFrame(rafLoop);
         })();
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Navegación entre pantallas                                 */
-    /* ──────────────────────────────────────────────────────────── */
     function mostrarPantalla(id) {
-        [pantallaInicio, pantallaQuiz, pantallaVictoria, pantallaDerrota]
-            .forEach(el => { el.classList.add('d-none'); el.classList.remove('fade-in'); });
-
+        pantallas.forEach(el => {
+            el.classList.add('d-none');
+            el.classList.remove('fade-in');
+        });
         const target = $(id);
         target.classList.remove('d-none');
-        void target.offsetWidth; // reflow — re-dispara la animación
+        void target.offsetWidth;
         target.classList.add('fade-in');
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Renderizar pregunta                                        */
-    /* ──────────────────────────────────────────────────────────── */
     function renderizarPregunta() {
         respondido = false;
-
         const q = preguntas[indice];
 
         $('num-pregunta').textContent = indice + 1;
+        $('meta-preguntas').textContent = `Question ${indice + 1} of ${TOTAL}`;
         $('texto-pregunta').textContent = q.pregunta;
         $('barra-progreso').style.width = `${(indice / TOTAL) * 100}%`;
         $('label-score').textContent = `⭐ ${puntaje} / ${TOTAL}`;
 
         const feedback = $('feedback');
         feedback.style.opacity = '0';
-        feedback.textContent   = '';
+        feedback.textContent = '';
 
-        // Renderizar opciones
         const contenedor = $('contenedor-opciones');
         contenedor.innerHTML = '';
+
         q.opciones.forEach((opcion, i) => {
             const btn = document.createElement('button');
             btn.className = 'btn-respuesta';
-            btn.innerHTML = `<span style="color:#f43f5e; font-weight:700; margin-right:.45rem;">${String.fromCharCode(65 + i)}.</span>${opcion}`;
+            btn.innerHTML = `<span style="color:#f43f5e;font-weight:700;margin-right:.45rem;">${String.fromCharCode(65 + i)}.</span>${opcion}`;
             btn.addEventListener('click', () => manejarRespuesta(i, btn));
             contenedor.appendChild(btn);
         });
 
-        // Animación slide-in
         const tarjeta = $('tarjeta-pregunta');
         tarjeta.classList.remove('slide-in');
         void tarjeta.offsetWidth;
         tarjeta.classList.add('slide-in');
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Manejar respuesta                                          */
-    /* ──────────────────────────────────────────────────────────── */
     function manejarRespuesta(seleccionado, btnSeleccionado) {
         if (respondido) return;
         respondido = true;
 
-        const q       = preguntas[indice];
-        const todos   = $('contenedor-opciones').querySelectorAll('.btn-respuesta');
+        const q = preguntas[indice];
+        const botones = $('contenedor-opciones').querySelectorAll('.btn-respuesta');
         const feedback = $('feedback');
 
-        todos.forEach(b => b.disabled = true);
+        botones.forEach(b => { b.disabled = true; });
 
         if (seleccionado === q.correcta) {
-            /* ✅ Correcto */
             puntaje++;
             btnSeleccionado.classList.add('correcta');
-            feedback.innerHTML = '<span style="color:#059669;">✅ Correct! You know me perfectly! 💕</span>';
-            feedback.style.opacity = '1';
+            feedback.innerHTML = '<span style="color:#059669;">✅ Correct, my love.</span>';
             reproducirAcierto();
-
-            // Pulso en el score
-            const labelScore = $('label-score');
-            labelScore.classList.remove('pulse-once');
-            void labelScore.offsetWidth;
-            labelScore.classList.add('pulse-once');
-            labelScore.textContent = `⭐ ${puntaje} / ${TOTAL}`;
-            setTimeout(() => labelScore.classList.remove('pulse-once'), 550);
-
         } else {
-            /* ❌ Incorrecto */
             btnSeleccionado.classList.add('incorrecta');
-            todos[q.correcta].classList.add('correcta');
-            feedback.innerHTML = '<span style="color:#dc2626;">💔 Almost! The correct answer is highlighted. You can do it!</span>';
-            feedback.style.opacity = '1';
+            botones[q.correcta].classList.add('correcta');
+            feedback.innerHTML = '<span style="color:#dc2626;">💔 Almost, check the highlighted answer.</span>';
             reproducirError();
-
             const tarjeta = $('tarjeta-pregunta');
             tarjeta.classList.remove('shake');
             void tarjeta.offsetWidth;
             tarjeta.classList.add('shake');
-            setTimeout(() => tarjeta.classList.remove('shake'), 500);
+            setTimeout(() => tarjeta.classList.remove('shake'), 460);
         }
 
-        // Avanzar tras pausa
+        feedback.style.opacity = '1';
+        $('label-score').textContent = `⭐ ${puntaje} / ${TOTAL}`;
+
         setTimeout(() => {
             indice++;
             if (indice < TOTAL) {
                 renderizarPregunta();
-            } else {
-                finalizarQuiz();
+                return;
             }
-        }, 1850);
+            finalizarQuiz();
+        }, 1500);
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Finalizar quiz                                             */
-    /* ──────────────────────────────────────────────────────────── */
     function finalizarQuiz() {
         const porcentaje = Math.round((puntaje / TOTAL) * 100);
-        if (porcentaje >= 80) {
-            $('score-porcentaje').textContent = porcentaje + '%';
-            obtenerMensajeDeAmor();
-        } else {
-            $('puntaje-final').textContent = puntaje;
-            $('porcentaje-final').textContent = porcentaje + '%';
-            mostrarPantalla('screen-derrota');
+        if (porcentaje >= PASSING_SCORE) {
+            $('score-porcentaje').textContent = `${porcentaje}%`;
+            mostrarPantalla('screen-puzzle');
+            iniciarRetoPuzzle();
+            return;
         }
+
+        $('puntaje-final').textContent = puntaje;
+        $('porcentaje-final').textContent = `${porcentaje}%`;
+        mostrarPantalla('screen-derrota');
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Fetch seguro a api.php                                     */
-    /* ──────────────────────────────────────────────────────────── */
+    function mezclar(array) {
+        const copia = array.slice();
+        for (let i = copia.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copia[i], copia[j]] = [copia[j], copia[i]];
+        }
+        return copia;
+    }
+
+    function puzzleResuelto() {
+        return puzzleOrden.every((pieza, idx) => pieza === idx);
+    }
+
+    function reiniciarPuzzleActual() {
+        puzzleSize = getPuzzleSize();
+        imagenPuzzleActual = puzzleImagenesReto[puzzleFotoActual] || '';
+
+        puzzleBloqueado = false;
+        puzzleSeleccionado = null;
+        puzzleMovimientos = 0;
+        actualizarInfoPuzzle();
+
+        const base = Array.from({ length: puzzleSize * puzzleSize }, (_, i) => i);
+        do {
+            puzzleOrden = mezclar(base);
+        } while (puzzleResuelto());
+
+        renderizarPuzzle();
+    }
+
+    function iniciarRetoPuzzle() {
+        puzzleSize = getPuzzleSize();
+        prepararRetoPuzzle();
+        reiniciarPuzzleActual();
+    }
+
+    function crearTile(pieza, posicion) {
+        const tile = document.createElement('button');
+        tile.className = 'puzzle-tile';
+        tile.type = 'button';
+
+        const x = pieza % puzzleSize;
+        const y = Math.floor(pieza / puzzleSize);
+        const bgX = (x / (puzzleSize - 1)) * 100;
+        const bgY = (y / (puzzleSize - 1)) * 100;
+
+        if (imagenPuzzleActual) {
+            tile.style.backgroundImage = `url('${imagenPuzzleActual}')`;
+            tile.style.backgroundSize = `${puzzleSize * 100}% ${puzzleSize * 100}%`;
+            tile.style.backgroundPosition = `${bgX}% ${bgY}%`;
+        } else {
+            tile.classList.add('puzzle-fallback');
+            tile.textContent = String(pieza + 1);
+        }
+
+        if (puzzleSeleccionado === posicion) {
+            tile.classList.add('selected');
+        }
+
+        tile.addEventListener('click', () => manejarClickPuzzle(posicion));
+        return tile;
+    }
+
+    function renderizarPuzzle() {
+        const board = $('puzzle-board');
+        board.style.gridTemplateColumns = `repeat(${puzzleSize}, 1fr)`;
+        board.style.maxWidth = puzzleSize === 5 ? '560px' : '500px';
+        board.innerHTML = '';
+        puzzleOrden.forEach((pieza, posicion) => {
+            board.appendChild(crearTile(pieza, posicion));
+        });
+    }
+
+    function manejarClickPuzzle(posicion) {
+        if (puzzleBloqueado) return;
+
+        if (puzzleSeleccionado === null) {
+            puzzleSeleccionado = posicion;
+            renderizarPuzzle();
+            return;
+        }
+
+        if (puzzleSeleccionado === posicion) {
+            puzzleSeleccionado = null;
+            renderizarPuzzle();
+            return;
+        }
+
+        [puzzleOrden[puzzleSeleccionado], puzzleOrden[posicion]] = [puzzleOrden[posicion], puzzleOrden[puzzleSeleccionado]];
+        puzzleSeleccionado = null;
+        puzzleMovimientos++;
+        actualizarInfoPuzzle();
+        renderizarPuzzle();
+
+        if (!puzzleResuelto()) return;
+
+        puzzleBloqueado = true;
+        puzzleMovimientosTotales += puzzleMovimientos;
+
+        const faltantes = puzzleImagenesReto.length - (puzzleFotoActual + 1);
+        if (faltantes > 0) {
+            $('estado-puzzle').textContent = `Photo completed in ${puzzleMovimientos} moves. ${faltantes} photo left 💖`;
+            lanzarConfetti();
+            setTimeout(() => {
+                puzzleFotoActual++;
+                reiniciarPuzzleActual();
+            }, 900);
+            return;
+        }
+
+        $('estado-puzzle').textContent = `Challenge completed in ${puzzleMovimientosTotales} moves 💖`;
+        lanzarConfetti();
+        setTimeout(obtenerMensajeDeAmor, 900);
+    }
+
     async function obtenerMensajeDeAmor() {
         mostrarPantalla('screen-victoria');
+        renderizarDescargasImagenes();
 
         try {
             const resp = await fetch('api.php', {
-                method:  'POST',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ score: puntaje, total: TOTAL })
+                body: JSON.stringify({ score: puntaje, total: TOTAL })
             });
 
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
             const datos = await resp.json();
-
             if (datos.success && datos.message) {
                 $('mensaje-amor').innerHTML = datos.message;
             } else {
-                $('mensaje-amor').textContent = '💕 You did it! You are amazing, I love you. 💕';
+                $('mensaje-amor').textContent = 'Thank you for coming this far, my love. 💕';
             }
-
         } catch (err) {
-            console.warn('[Quiz] Could not reach api.php:', err.message);
-            $('mensaje-amor').textContent = '💕 You did it! You are amazing, I love you. 💕';
+            console.warn('[Quiz] Could not load letter:', err.message);
+            $('mensaje-amor').textContent = 'Thank you for coming this far, my love. 💕';
         }
 
-        // Revelar carta con delay
-        setTimeout(() => {
-            $('carta-amor').classList.add('visible');
-        }, 280);
-
-        // Confetti 🎊
-        setTimeout(lanzarConfetti, 520);
+        setTimeout(() => $('carta-amor').classList.add('visible'), 220);
+        setTimeout(lanzarConfetti, 360);
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Reiniciar estado                                           */
-    /* ──────────────────────────────────────────────────────────── */
     function reiniciarQuiz() {
-        indice    = 0;
-        puntaje   = 0;
+        indice = 0;
+        puntaje = 0;
         respondido = false;
-        $('barra-progreso').style.width = '0%';
-        $('label-score').textContent    = `⭐ 0 / ${TOTAL}`;
-        if ($('score-porcentaje')) $('score-porcentaje').textContent = '—';
-        if ($('porcentaje-final')) $('porcentaje-final').textContent = '0%';
 
-        // Resetear carta
-        const carta = $('carta-amor');
-        carta.classList.remove('visible');
+        puzzleOrden = [];
+        puzzleSeleccionado = null;
+        puzzleMovimientos = 0;
+        puzzleBloqueado = false;
+        puzzleImagenesReto = [];
+        puzzleFotoActual = 0;
+        puzzleMovimientosTotales = 0;
+
+        $('barra-progreso').style.width = '0%';
+        $('label-score').textContent = `⭐ 0 / ${TOTAL}`;
+        $('meta-preguntas').textContent = `Question 1 of ${TOTAL}`;
+        $('score-porcentaje').textContent = '—';
+        $('porcentaje-final').textContent = '0%';
+        $('puntaje-final').textContent = '0';
+        $('progreso-fotos').textContent = 'Photo 1 of 2';
+        $('estado-puzzle').textContent = 'Moves: 0';
         $('mensaje-amor').innerHTML = '';
+        $('lista-descargas').innerHTML = '';
+        $('descargas-imagenes').classList.add('d-none');
+        $('carta-amor').classList.remove('visible');
     }
 
-    /* ──────────────────────────────────────────────────────────── */
-    /*  Eventos                                                    */
-    /* ──────────────────────────────────────────────────────────── */
     $('btn-iniciar').addEventListener('click', () => {
+        activarMusica();
         reiniciarQuiz();
         mostrarPantalla('screen-quiz');
         renderizarPregunta();
     });
 
     $('btn-rejugar').addEventListener('click', () => {
+        activarMusica();
         reiniciarQuiz();
         mostrarPantalla('screen-quiz');
         renderizarPregunta();
     });
 
     $('btn-reintentar').addEventListener('click', () => {
+        activarMusica();
         reiniciarQuiz();
         mostrarPantalla('screen-quiz');
         renderizarPregunta();
     });
 
+    $('btn-audio').addEventListener('click', alternarMusica);
+    $('puzzle-dificultad').addEventListener('change', () => {
+        if ($('screen-puzzle').classList.contains('d-none')) return;
+        iniciarRetoPuzzle();
+    });
+
+    $('btn-mezclar').addEventListener('click', reiniciarPuzzleActual);
+    updateAudioButton();
     </script>
 </body>
 </html>
