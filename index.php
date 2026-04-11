@@ -246,6 +246,58 @@ if (is_dir($imgDir)) {
             background: linear-gradient(135deg, #f43f5e, #fb7185);
         }
 
+        .tab-shell {
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.56);
+            padding: 0.35rem;
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .tab-love .nav-link {
+            border: none;
+            color: #9f1239;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 0.62rem 1rem;
+        }
+
+        .tab-love .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            box-shadow: 0 10px 24px rgba(244, 63, 94, 0.3);
+        }
+
+        .quiz-pane-wrap {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .princess-game-card {
+            border-radius: 1.25rem;
+            padding: 1rem;
+        }
+
+        .princess-canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 1rem;
+            border: 1px solid rgba(165, 22, 77, 0.28);
+            background: linear-gradient(180deg, #ffe5ef 0%, #ffd7e6 100%);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 12px 26px rgba(66, 25, 52, 0.15);
+        }
+
+        .game-chip {
+            border-radius: 999px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #831843;
+            background: rgba(244, 63, 94, 0.13);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+
         .progress-shell {
             background: rgba(244, 63, 94, 0.1);
             border-radius: 999px;
@@ -366,6 +418,15 @@ if (is_dir($imgDir)) {
             .puzzle-board {
                 gap: 6px;
             }
+
+            .tab-love .nav-link {
+                font-size: 0.84rem;
+                padding: 0.52rem 0.8rem;
+            }
+
+            .princess-game-card {
+                padding: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -384,7 +445,21 @@ if (is_dir($imgDir)) {
         <span class="spark" style="top:82%;right:13%;font-size:1.4rem;animation-delay:.7s;">💕</span>
     </div>
 
-    <div class="container" style="max-width: 650px; position: relative; z-index: 2;">
+    <div class="container" style="max-width: 980px; position: relative; z-index: 2;">
+        <div class="tab-shell mb-3">
+            <ul class="nav nav-pills tab-love gap-2 justify-content-center" id="loveTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-quiz-btn" data-bs-toggle="tab" data-bs-target="#tab-quiz" type="button" role="tab" aria-controls="tab-quiz" aria-selected="true">Love Quiz + Puzzle</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-game-btn" data-bs-toggle="tab" data-bs-target="#tab-princess" type="button" role="tab" aria-controls="tab-princess" aria-selected="false">Princess Adventure</button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-quiz" role="tabpanel" aria-labelledby="tab-quiz-btn" tabindex="0">
+                <div class="quiz-pane-wrap">
         <div id="screen-inicio" class="card-romantic p-4 p-md-5 text-center fade-in">
             <div style="font-size: 3.4rem; line-height:1;">💌</div>
             <h1 class="font-title fw-bold mb-2" style="font-size: clamp(1.9rem, 6vw, 2.6rem); color: #a5164d;">
@@ -498,6 +573,38 @@ if (is_dir($imgDir)) {
                 <button id="btn-reintentar" class="btn btn-love">Try Again 🌸</button>
             </div>
         </div>
+
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-princess" role="tabpanel" aria-labelledby="tab-game-btn" tabindex="0">
+                <div class="card-romantic princess-game-card">
+                    <div class="text-center mb-3">
+                        <div style="font-size:2.2rem;line-height:1;">👑</div>
+                        <h2 class="font-title fw-bold mb-1" style="font-size:clamp(1.5rem,4vw,2rem);color:#a5164d;">Princess Adventure</h2>
+                        <p class="text-secondary mb-0">A princess platform game inspired by classic side-scrollers. Complete all levels to save the royal garden.</p>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+                        <span class="game-chip">Level: <span id="game-level">1</span> / 3</span>
+                        <span class="game-chip">Lives: <span id="game-lives">3</span></span>
+                        <span class="game-chip">Stars: <span id="game-stars">0</span></span>
+                    </div>
+
+                    <canvas id="princess-game-canvas" class="princess-canvas" width="900" height="340" aria-label="Princess platform game"></canvas>
+
+                    <p id="game-status" class="text-center fw-semibold mt-3 mb-3" style="color:#9f1239;">Press Start to begin your adventure.</p>
+
+                    <div class="d-flex justify-content-center flex-wrap gap-2 mb-2">
+                        <button id="btn-game-start" class="btn btn-love" type="button">Start Game</button>
+                        <button id="btn-game-restart" class="btn btn-gold" type="button">Restart Level</button>
+                        <button id="btn-game-next" class="btn btn-gold" type="button" disabled>Next Level</button>
+                    </div>
+
+                    <p class="text-center text-secondary mb-0" style="font-size:.9rem;">Controls: <strong>A / D</strong> or <strong>← / →</strong> to move, <strong>W / Space / ↑</strong> to jump.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -588,6 +695,374 @@ if (is_dir($imgDir)) {
     let audioCtx = null;
     let bgmMaster = null;
     let bgmMuted = true;
+
+    const gameCanvas = $('princess-game-canvas');
+    const gameCtx = gameCanvas ? gameCanvas.getContext('2d') : null;
+
+    const game = {
+        running: false,
+        loopStarted: false,
+        currentLevel: 0,
+        lives: 3,
+        stars: 0,
+        cameraX: 0,
+        jumpQueued: false,
+        levelCompleted: false,
+        keys: { left: false, right: false },
+        player: { x: 40, y: 80, w: 30, h: 44, vx: 0, vy: 0, onGround: false },
+        levels: [
+            {
+                worldWidth: 1700,
+                spawn: { x: 46, y: 180 },
+                goal: { x: 1600, y: 198, w: 48, h: 82 },
+                platforms: [
+                    { x: 0, y: 280, w: 360, h: 60 },
+                    { x: 420, y: 280, w: 360, h: 60 },
+                    { x: 840, y: 280, w: 390, h: 60 },
+                    { x: 1280, y: 280, w: 420, h: 60 },
+                    { x: 210, y: 220, w: 120, h: 16 },
+                    { x: 620, y: 210, w: 130, h: 16 },
+                    { x: 1010, y: 205, w: 120, h: 16 }
+                ],
+                stars: [
+                    { x: 260, y: 188, taken: false },
+                    { x: 670, y: 178, taken: false },
+                    { x: 1060, y: 174, taken: false },
+                    { x: 1450, y: 242, taken: false }
+                ],
+                enemies: [
+                    { x: 520, y: 248, w: 30, h: 32, minX: 460, maxX: 730, speed: 1.3, dir: 1 },
+                    { x: 1160, y: 248, w: 30, h: 32, minX: 950, maxX: 1220, speed: 1.5, dir: -1 }
+                ]
+            },
+            {
+                worldWidth: 2000,
+                spawn: { x: 46, y: 170 },
+                goal: { x: 1900, y: 178, w: 48, h: 102 },
+                platforms: [
+                    { x: 0, y: 280, w: 310, h: 60 },
+                    { x: 360, y: 260, w: 220, h: 80 },
+                    { x: 640, y: 225, w: 170, h: 18 },
+                    { x: 860, y: 280, w: 250, h: 60 },
+                    { x: 1170, y: 248, w: 220, h: 92 },
+                    { x: 1460, y: 210, w: 180, h: 18 },
+                    { x: 1700, y: 280, w: 300, h: 60 }
+                ],
+                stars: [
+                    { x: 430, y: 224, taken: false },
+                    { x: 700, y: 188, taken: false },
+                    { x: 1260, y: 210, taken: false },
+                    { x: 1520, y: 174, taken: false },
+                    { x: 1800, y: 246, taken: false }
+                ],
+                enemies: [
+                    { x: 930, y: 248, w: 30, h: 32, minX: 900, maxX: 1060, speed: 1.8, dir: 1 },
+                    { x: 1750, y: 248, w: 30, h: 32, minX: 1720, maxX: 1920, speed: 1.65, dir: -1 }
+                ]
+            },
+            {
+                worldWidth: 2300,
+                spawn: { x: 50, y: 130 },
+                goal: { x: 2200, y: 120, w: 56, h: 160 },
+                platforms: [
+                    { x: 0, y: 280, w: 260, h: 60 },
+                    { x: 320, y: 248, w: 190, h: 92 },
+                    { x: 570, y: 210, w: 170, h: 20 },
+                    { x: 790, y: 175, w: 170, h: 20 },
+                    { x: 1010, y: 235, w: 180, h: 105 },
+                    { x: 1260, y: 195, w: 170, h: 20 },
+                    { x: 1490, y: 165, w: 170, h: 20 },
+                    { x: 1730, y: 220, w: 200, h: 120 },
+                    { x: 1980, y: 280, w: 320, h: 60 }
+                ],
+                stars: [
+                    { x: 390, y: 210, taken: false },
+                    { x: 640, y: 170, taken: false },
+                    { x: 860, y: 138, taken: false },
+                    { x: 1320, y: 160, taken: false },
+                    { x: 1560, y: 130, taken: false },
+                    { x: 1810, y: 186, taken: false },
+                    { x: 2100, y: 242, taken: false }
+                ],
+                enemies: [
+                    { x: 350, y: 216, w: 30, h: 32, minX: 330, maxX: 470, speed: 1.9, dir: 1 },
+                    { x: 1040, y: 203, w: 30, h: 32, minX: 1020, maxX: 1160, speed: 2, dir: -1 },
+                    { x: 2000, y: 248, w: 30, h: 32, minX: 1990, maxX: 2240, speed: 2.15, dir: 1 }
+                ]
+            }
+        ]
+    };
+
+    function updateGameHud() {
+        if (!gameCanvas) return;
+        $('game-level').textContent = String(game.currentLevel + 1);
+        $('game-lives').textContent = String(game.lives);
+        $('game-stars').textContent = String(game.stars);
+    }
+
+    function setGameStatus(msg, color = '#9f1239') {
+        if (!gameCanvas) return;
+        const el = $('game-status');
+        el.textContent = msg;
+        el.style.color = color;
+    }
+
+    function levelData() {
+        return game.levels[game.currentLevel];
+    }
+
+    function resetPlayerPosition() {
+        const lvl = levelData();
+        game.player.x = lvl.spawn.x;
+        game.player.y = lvl.spawn.y;
+        game.player.vx = 0;
+        game.player.vy = 0;
+        game.player.onGround = false;
+        game.cameraX = 0;
+    }
+
+    function loadCurrentLevel() {
+        const lvl = levelData();
+        lvl.stars.forEach(star => { star.taken = false; });
+        lvl.enemies.forEach(enemy => {
+            enemy.dir = enemy.dir >= 0 ? 1 : -1;
+        });
+        game.levelCompleted = false;
+        $('btn-game-next').disabled = true;
+        resetPlayerPosition();
+        updateGameHud();
+    }
+
+    function intersects(a, b) {
+        return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    }
+
+    function loseLife(reason) {
+        game.lives -= 1;
+        if (game.lives <= 0) {
+            game.lives = 3;
+            game.stars = 0;
+            loadCurrentLevel();
+            setGameStatus(`You lost all lives. Level ${game.currentLevel + 1} restarted.`, '#be123c');
+            return;
+        }
+        resetPlayerPosition();
+        setGameStatus(`${reason} Lives left: ${game.lives}.`, '#be123c');
+        updateGameHud();
+    }
+
+    function completeLevel() {
+        game.levelCompleted = true;
+        game.running = false;
+        const isLast = game.currentLevel === game.levels.length - 1;
+        if (isLast) {
+            setGameStatus('You completed all princess levels. The royal garden is safe. 💖', '#047857');
+            $('btn-game-next').disabled = true;
+            return;
+        }
+        $('btn-game-next').disabled = false;
+        setGameStatus(`Level ${game.currentLevel + 1} complete. Tap Next Level.`, '#047857');
+    }
+
+    function updateGame() {
+        if (!gameCanvas || !game.running) return;
+
+        const lvl = levelData();
+        const player = game.player;
+
+        player.vx = 0;
+        if (game.keys.left) player.vx = -3.5;
+        if (game.keys.right) player.vx = 3.5;
+
+        if (game.jumpQueued && player.onGround) {
+            player.vy = -10.8;
+            player.onGround = false;
+        }
+        game.jumpQueued = false;
+
+        player.vy += 0.54;
+        if (player.vy > 11) player.vy = 11;
+
+        player.x += player.vx;
+        lvl.platforms.forEach(pl => {
+            if (!intersects(player, pl)) return;
+            if (player.vx > 0) player.x = pl.x - player.w;
+            else if (player.vx < 0) player.x = pl.x + pl.w;
+        });
+
+        player.y += player.vy;
+        player.onGround = false;
+        lvl.platforms.forEach(pl => {
+            if (!intersects(player, pl)) return;
+            if (player.vy > 0) {
+                player.y = pl.y - player.h;
+                player.vy = 0;
+                player.onGround = true;
+            } else if (player.vy < 0) {
+                player.y = pl.y + pl.h;
+                player.vy = 0;
+            }
+        });
+
+        if (player.x < 0) player.x = 0;
+        if (player.x + player.w > lvl.worldWidth) player.x = lvl.worldWidth - player.w;
+
+        if (player.y > gameCanvas.height + 120) {
+            loseLife('You fell from the castle path.');
+            return;
+        }
+
+        lvl.enemies.forEach(enemy => {
+            enemy.x += enemy.speed * enemy.dir;
+            if (enemy.x <= enemy.minX || enemy.x + enemy.w >= enemy.maxX) {
+                enemy.dir *= -1;
+            }
+
+            if (intersects(player, enemy)) {
+                loseLife('A guardian blocked your way.');
+            }
+        });
+
+        lvl.stars.forEach(star => {
+            if (star.taken) return;
+            const hit = intersects(player, { x: star.x - 8, y: star.y - 8, w: 16, h: 16 });
+            if (!hit) return;
+            star.taken = true;
+            game.stars += 1;
+            updateGameHud();
+            setGameStatus(`Star collected. Total stars: ${game.stars}.`, '#9f1239');
+        });
+
+        if (intersects(player, lvl.goal)) {
+            completeLevel();
+        }
+
+        const maxCamera = Math.max(0, lvl.worldWidth - gameCanvas.width);
+        game.cameraX = Math.max(0, Math.min(maxCamera, player.x - gameCanvas.width * 0.35));
+    }
+
+    function drawCloud(x, y, size) {
+        gameCtx.beginPath();
+        gameCtx.arc(x, y, size, Math.PI * 0.5, Math.PI * 1.5);
+        gameCtx.arc(x + size, y - size * 0.35, size * 1.08, Math.PI, Math.PI * 2);
+        gameCtx.arc(x + size * 2, y, size * 0.9, Math.PI * 1.5, Math.PI * 0.5);
+        gameCtx.closePath();
+        gameCtx.fill();
+    }
+
+    function drawGame() {
+        if (!gameCanvas || !gameCtx) return;
+
+        const w = gameCanvas.width;
+        const h = gameCanvas.height;
+        gameCtx.clearRect(0, 0, w, h);
+
+        const bg = gameCtx.createLinearGradient(0, 0, 0, h);
+        bg.addColorStop(0, '#ffe9f2');
+        bg.addColorStop(1, '#ffd7e7');
+        gameCtx.fillStyle = bg;
+        gameCtx.fillRect(0, 0, w, h);
+
+        const parallax = game.cameraX * 0.35;
+        gameCtx.fillStyle = 'rgba(255,255,255,0.8)';
+        drawCloud(120 - parallax, 70, 16);
+        drawCloud(380 - parallax * 0.9, 52, 18);
+        drawCloud(690 - parallax * 0.7, 84, 14);
+
+        const lvl = levelData();
+
+        gameCtx.save();
+        gameCtx.translate(-game.cameraX, 0);
+
+        gameCtx.fillStyle = '#f9a8d4';
+        lvl.platforms.forEach(pl => {
+            gameCtx.fillRect(pl.x, pl.y, pl.w, pl.h);
+            gameCtx.fillStyle = '#f472b6';
+            gameCtx.fillRect(pl.x, pl.y, pl.w, 9);
+            gameCtx.fillStyle = '#f9a8d4';
+        });
+
+        lvl.stars.forEach(star => {
+            if (star.taken) return;
+            gameCtx.fillStyle = '#f59e0b';
+            gameCtx.beginPath();
+            gameCtx.arc(star.x, star.y, 7, 0, Math.PI * 2);
+            gameCtx.fill();
+            gameCtx.fillStyle = '#fff7ed';
+            gameCtx.fillRect(star.x - 1, star.y - 5, 2, 10);
+            gameCtx.fillRect(star.x - 5, star.y - 1, 10, 2);
+        });
+
+        lvl.enemies.forEach(enemy => {
+            gameCtx.fillStyle = '#be185d';
+            gameCtx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
+            gameCtx.fillStyle = '#fecdd3';
+            gameCtx.fillRect(enemy.x + 6, enemy.y + 8, 5, 5);
+            gameCtx.fillRect(enemy.x + 18, enemy.y + 8, 5, 5);
+        });
+
+        gameCtx.fillStyle = '#e11d48';
+        gameCtx.fillRect(lvl.goal.x, lvl.goal.y, lvl.goal.w, lvl.goal.h);
+        gameCtx.fillStyle = '#fff';
+        gameCtx.fillRect(lvl.goal.x + 5, lvl.goal.y + 8, 13, 10);
+        gameCtx.fillStyle = '#f59e0b';
+        gameCtx.fillRect(lvl.goal.x + 20, lvl.goal.y - 14, 18, 14);
+
+        const p = game.player;
+        gameCtx.fillStyle = '#db2777';
+        gameCtx.fillRect(p.x, p.y + 14, p.w, p.h - 14);
+        gameCtx.fillStyle = '#fecdd3';
+        gameCtx.beginPath();
+        gameCtx.arc(p.x + p.w / 2, p.y + 9, 9, 0, Math.PI * 2);
+        gameCtx.fill();
+        gameCtx.fillStyle = '#f59e0b';
+        gameCtx.fillRect(p.x + 8, p.y - 4, 14, 5);
+        gameCtx.fillRect(p.x + 12, p.y - 9, 6, 5);
+
+        gameCtx.restore();
+    }
+
+    function gameLoop() {
+        if (!gameCanvas) return;
+        updateGame();
+        drawGame();
+        requestAnimationFrame(gameLoop);
+    }
+
+    function ensureGameLoop() {
+        if (game.loopStarted || !gameCanvas) return;
+        game.loopStarted = true;
+        requestAnimationFrame(gameLoop);
+    }
+
+    function startPrincessGame() {
+        if (!gameCanvas) return;
+        game.currentLevel = 0;
+        game.lives = 3;
+        game.stars = 0;
+        loadCurrentLevel();
+        game.running = true;
+        setGameStatus('Adventure started. Reach the pink castle gate.', '#9f1239');
+        ensureGameLoop();
+    }
+
+    function restartPrincessLevel() {
+        if (!gameCanvas) return;
+        loadCurrentLevel();
+        game.running = true;
+        setGameStatus(`Level ${game.currentLevel + 1} restarted.`, '#9f1239');
+        ensureGameLoop();
+    }
+
+    function nextPrincessLevel() {
+        if (!gameCanvas) return;
+        if (game.currentLevel >= game.levels.length - 1) return;
+        game.currentLevel += 1;
+        loadCurrentLevel();
+        game.running = true;
+        setGameStatus(`Welcome to level ${game.currentLevel + 1}.`, '#9f1239');
+        ensureGameLoop();
+    }
 
     function getPuzzleSize() {
         const size = Number.parseInt($('puzzle-dificultad').value, 10);
@@ -1063,6 +1538,24 @@ if (is_dir($imgDir)) {
         $('carta-amor').classList.remove('visible');
     }
 
+    window.addEventListener('keydown', event => {
+        const key = event.key.toLowerCase();
+        if (key === 'arrowleft' || key === 'a') game.keys.left = true;
+        if (key === 'arrowright' || key === 'd') game.keys.right = true;
+        if (key === 'arrowup' || key === 'w' || key === ' ') {
+            game.jumpQueued = true;
+        }
+        if (['arrowleft', 'arrowright', 'arrowup', ' ', 'a', 'd', 'w'].includes(key)) {
+            event.preventDefault();
+        }
+    });
+
+    window.addEventListener('keyup', event => {
+        const key = event.key.toLowerCase();
+        if (key === 'arrowleft' || key === 'a') game.keys.left = false;
+        if (key === 'arrowright' || key === 'd') game.keys.right = false;
+    });
+
     $('btn-iniciar').addEventListener('click', () => {
         activarMusica();
         reiniciarQuiz();
@@ -1089,6 +1582,14 @@ if (is_dir($imgDir)) {
         if ($('screen-puzzle').classList.contains('d-none')) return;
         iniciarRetoPuzzle();
     });
+
+    if (gameCanvas) {
+        $('btn-game-start').addEventListener('click', startPrincessGame);
+        $('btn-game-restart').addEventListener('click', restartPrincessLevel);
+        $('btn-game-next').addEventListener('click', nextPrincessLevel);
+        updateGameHud();
+        drawGame();
+    }
 
     $('btn-mezclar').addEventListener('click', reiniciarPuzzleActual);
     updateAudioButton();
