@@ -3,6 +3,50 @@
  * index.php — Quiz romántico + puzzle de imagen.
  */
 
+$secureCookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'httponly' => true,
+    'samesite' => 'Strict',
+    'secure' => $secureCookie,
+]);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+$csrfToken = $_SESSION['csrf_token'];
+$cspNonce = base64_encode(random_bytes(18));
+
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+header('Cross-Origin-Opener-Policy: same-origin');
+header('Cross-Origin-Resource-Policy: same-origin');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+
+if ($secureCookie) {
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
+
+$csp = "default-src 'self'; "
+    . "script-src 'self' https://cdn.jsdelivr.net 'nonce-{$cspNonce}'; "
+    . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+    . "img-src 'self' data:; "
+    . "font-src 'self' https://fonts.gstatic.com; "
+    . "connect-src 'self'; "
+    . "object-src 'none'; "
+    . "frame-ancestors 'none'; "
+    . "base-uri 'self'; "
+    . "form-action 'self'";
+header("Content-Security-Policy: {$csp}");
+
 $imagenesPuzzle = [];
 $imgDir = __DIR__ . '/img';
 
@@ -434,6 +478,10 @@ if (is_dir($imgDir)) {
                 <div id="lista-descargas" class="d-flex flex-wrap justify-content-center gap-2"></div>
             </div>
 
+            <p class="font-title fw-bold mb-4" style="color:#a5164d; font-size:clamp(1rem,3.8vw,1.35rem); letter-spacing:.02em;">
+                HAPPY ANNIVERSARY MY LOVE 1 YEAR AND 9 MONTHS, UNTIL THE ETERNITY YOU AND ME.
+            </p>
+
             <button id="btn-rejugar" class="btn btn-gold">Play Again ♻️</button>
         </div>
 
@@ -453,8 +501,9 @@ if (is_dir($imgDir)) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script nonce="<?php echo htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8'); ?>">
     const IMAGENES_PUZZLE = <?php echo json_encode($imagenesPuzzle, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
+    const CSRF_TOKEN = <?php echo json_encode($csrfToken, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
 
     const preguntas = [
         {
@@ -963,7 +1012,10 @@ if (is_dir($imgDir)) {
         try {
             const resp = await fetch('api.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': CSRF_TOKEN,
+                },
                 body: JSON.stringify({ score: puntaje, total: TOTAL })
             });
 
