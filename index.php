@@ -298,6 +298,26 @@ if (is_dir($imgDir)) {
             border: 1px solid rgba(244, 63, 94, 0.2);
         }
 
+        .game-touch-controls {
+            display: none;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 0.4rem;
+        }
+
+        .game-touch-btn {
+            min-width: 68px;
+            min-height: 48px;
+            border: none;
+            border-radius: 0.9rem;
+            color: #fff;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            box-shadow: 0 8px 18px rgba(244, 63, 94, 0.24);
+            touch-action: manipulation;
+        }
+
         .progress-shell {
             background: rgba(244, 63, 94, 0.1);
             border-radius: 999px;
@@ -426,6 +446,23 @@ if (is_dir($imgDir)) {
 
             .princess-game-card {
                 padding: 0.75rem;
+            }
+
+            .audio-toggle {
+                top: 10px;
+                right: 10px;
+                font-size: 0.78rem;
+                padding: 0.48rem 0.78rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-touch-controls {
+                display: flex;
+            }
+
+            .princess-canvas {
+                border-radius: 0.85rem;
             }
         }
     </style>
@@ -601,7 +638,13 @@ if (is_dir($imgDir)) {
                         <button id="btn-game-next" class="btn btn-gold" type="button" disabled>Next Level</button>
                     </div>
 
-                    <p class="text-center text-secondary mb-0" style="font-size:.9rem;">Controls: <strong>A / D</strong> or <strong>← / →</strong> to move, <strong>W / Space / ↑</strong> to jump.</p>
+                    <div class="game-touch-controls" aria-label="Touch controls for mobile">
+                        <button id="btn-touch-left" class="game-touch-btn" type="button">←</button>
+                        <button id="btn-touch-jump" class="game-touch-btn" type="button">JUMP</button>
+                        <button id="btn-touch-right" class="game-touch-btn" type="button">→</button>
+                    </div>
+
+                    <p class="text-center text-secondary mb-0" style="font-size:.9rem;">Controls: <strong>A / D</strong> or <strong>← / →</strong> to move, <strong>W / Space / ↑</strong> to jump. On mobile use the touch buttons.</p>
                 </div>
             </div>
         </div>
@@ -1709,6 +1752,28 @@ if (is_dir($imgDir)) {
         if (key === 'arrowright' || key === 'd') game.keys.right = false;
     });
 
+    function bindTouchControl(buttonId, onPress, onRelease) {
+        const btn = $(buttonId);
+        if (!btn) return;
+
+        const press = event => {
+            event.preventDefault();
+            onPress();
+        };
+
+        const release = event => {
+            event.preventDefault();
+            onRelease();
+        };
+
+        btn.addEventListener('touchstart', press, { passive: false });
+        btn.addEventListener('touchend', release, { passive: false });
+        btn.addEventListener('touchcancel', release, { passive: false });
+        btn.addEventListener('mousedown', press);
+        btn.addEventListener('mouseup', release);
+        btn.addEventListener('mouseleave', release);
+    }
+
     $('btn-iniciar').addEventListener('click', () => {
         activarMusica();
         reiniciarQuiz();
@@ -1740,6 +1805,11 @@ if (is_dir($imgDir)) {
         $('btn-game-start').addEventListener('click', startPrincessGame);
         $('btn-game-restart').addEventListener('click', restartPrincessLevel);
         $('btn-game-next').addEventListener('click', nextPrincessLevel);
+
+        bindTouchControl('btn-touch-left', () => { game.keys.left = true; }, () => { game.keys.left = false; });
+        bindTouchControl('btn-touch-right', () => { game.keys.right = true; }, () => { game.keys.right = false; });
+        bindTouchControl('btn-touch-jump', () => { game.jumpQueued = true; }, () => {});
+
         updateGameHud();
         drawGame();
     }
