@@ -586,7 +586,7 @@ if (is_dir($imgDir)) {
                     </div>
 
                     <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
-                        <span class="game-chip">Level: <span id="game-level">1</span> / 3</span>
+                        <span class="game-chip">Level: <span id="game-level">1</span> / <span id="game-level-total">5</span></span>
                         <span class="game-chip">Lives: <span id="game-lives">3</span></span>
                         <span class="game-chip">Stars: <span id="game-stars">0</span></span>
                     </div>
@@ -789,6 +789,78 @@ if (is_dir($imgDir)) {
                     { x: 1040, y: 203, w: 30, h: 32, minX: 1020, maxX: 1160, speed: 2, dir: -1 },
                     { x: 2000, y: 248, w: 30, h: 32, minX: 1990, maxX: 2240, speed: 2.15, dir: 1 }
                 ]
+            },
+            {
+                worldWidth: 2500,
+                spawn: { x: 50, y: 145 },
+                goal: { x: 2390, y: 150, w: 56, h: 130 },
+                platforms: [
+                    { x: 0, y: 280, w: 220, h: 60 },
+                    { x: 280, y: 245, w: 160, h: 95 },
+                    { x: 500, y: 210, w: 150, h: 20 },
+                    { x: 710, y: 180, w: 140, h: 20 },
+                    { x: 910, y: 220, w: 200, h: 120 },
+                    { x: 1170, y: 180, w: 150, h: 20 },
+                    { x: 1390, y: 150, w: 160, h: 20 },
+                    { x: 1620, y: 200, w: 200, h: 140 },
+                    { x: 1880, y: 170, w: 160, h: 20 },
+                    { x: 2100, y: 220, w: 190, h: 120 },
+                    { x: 2330, y: 280, w: 170, h: 60 }
+                ],
+                stars: [
+                    { x: 340, y: 206, taken: false },
+                    { x: 560, y: 172, taken: false },
+                    { x: 770, y: 142, taken: false },
+                    { x: 1230, y: 146, taken: false },
+                    { x: 1460, y: 118, taken: false },
+                    { x: 1690, y: 168, taken: false },
+                    { x: 1940, y: 138, taken: false },
+                    { x: 2160, y: 188, taken: false }
+                ],
+                enemies: [
+                    { x: 300, y: 213, w: 30, h: 32, minX: 290, maxX: 430, speed: 2, dir: 1 },
+                    { x: 940, y: 188, w: 30, h: 32, minX: 925, maxX: 1070, speed: 2.1, dir: -1 },
+                    { x: 1640, y: 168, w: 30, h: 32, minX: 1635, maxX: 1790, speed: 2.2, dir: 1 },
+                    { x: 2130, y: 188, w: 30, h: 32, minX: 2115, maxX: 2270, speed: 2.25, dir: -1 }
+                ]
+            },
+            {
+                worldWidth: 2850,
+                spawn: { x: 50, y: 160 },
+                goal: { x: 2730, y: 135, w: 60, h: 145 },
+                platforms: [
+                    { x: 0, y: 280, w: 210, h: 60 },
+                    { x: 260, y: 240, w: 170, h: 100 },
+                    { x: 490, y: 200, w: 150, h: 24 },
+                    { x: 700, y: 165, w: 150, h: 24 },
+                    { x: 900, y: 130, w: 150, h: 24 },
+                    { x: 1100, y: 190, w: 170, h: 150 },
+                    { x: 1325, y: 150, w: 150, h: 24 },
+                    { x: 1530, y: 115, w: 160, h: 24 },
+                    { x: 1745, y: 175, w: 180, h: 165 },
+                    { x: 1990, y: 140, w: 150, h: 24 },
+                    { x: 2200, y: 105, w: 150, h: 24 },
+                    { x: 2410, y: 170, w: 190, h: 170 },
+                    { x: 2650, y: 280, w: 200, h: 60 }
+                ],
+                stars: [
+                    { x: 320, y: 200, taken: false },
+                    { x: 540, y: 160, taken: false },
+                    { x: 750, y: 124, taken: false },
+                    { x: 950, y: 92, taken: false },
+                    { x: 1360, y: 122, taken: false },
+                    { x: 1580, y: 88, taken: false },
+                    { x: 2030, y: 110, taken: false },
+                    { x: 2240, y: 76, taken: false },
+                    { x: 2470, y: 136, taken: false },
+                    { x: 2700, y: 242, taken: false }
+                ],
+                enemies: [
+                    { x: 290, y: 208, w: 30, h: 32, minX: 275, maxX: 415, speed: 2.2, dir: 1 },
+                    { x: 1130, y: 158, w: 30, h: 32, minX: 1110, maxX: 1240, speed: 2.35, dir: -1 },
+                    { x: 1770, y: 143, w: 30, h: 32, minX: 1760, maxX: 1900, speed: 2.45, dir: 1 },
+                    { x: 2430, y: 138, w: 30, h: 32, minX: 2420, maxX: 2580, speed: 2.55, dir: -1 }
+                ]
             }
         ]
     };
@@ -796,6 +868,7 @@ if (is_dir($imgDir)) {
     function updateGameHud() {
         if (!gameCanvas) return;
         $('game-level').textContent = String(game.currentLevel + 1);
+        $('game-level-total').textContent = String(game.levels.length);
         $('game-lives').textContent = String(game.lives);
         $('game-stars').textContent = String(game.stars);
     }
@@ -826,6 +899,7 @@ if (is_dir($imgDir)) {
         lvl.stars.forEach(star => { star.taken = false; });
         lvl.enemies.forEach(enemy => {
             enemy.dir = enemy.dir >= 0 ? 1 : -1;
+            enemy.alive = true;
         });
         game.levelCompleted = false;
         $('btn-game-next').disabled = true;
@@ -869,6 +943,7 @@ if (is_dir($imgDir)) {
 
         const lvl = levelData();
         const player = game.player;
+        const prevBottom = player.y + player.h;
 
         player.vx = 0;
         if (game.keys.left) player.vx = -3.5;
@@ -912,16 +987,33 @@ if (is_dir($imgDir)) {
             return;
         }
 
+        let wasDamaged = false;
         lvl.enemies.forEach(enemy => {
+            if (!enemy.alive) return;
+
             enemy.x += enemy.speed * enemy.dir;
             if (enemy.x <= enemy.minX || enemy.x + enemy.w >= enemy.maxX) {
                 enemy.dir *= -1;
             }
 
             if (intersects(player, enemy)) {
-                loseLife('A guardian blocked your way.');
+                const stompHit = player.vy >= 0 && prevBottom <= enemy.y + 12;
+                if (stompHit) {
+                    enemy.alive = false;
+                    player.vy = -8.4;
+                    player.y = enemy.y - player.h - 1;
+                    setGameStatus('Great jump! You defeated a guardian.', '#047857');
+                    return;
+                }
+
+                wasDamaged = true;
             }
         });
+
+        if (wasDamaged) {
+            loseLife('A guardian blocked your way.');
+            return;
+        }
 
         lvl.stars.forEach(star => {
             if (star.taken) return;
@@ -948,6 +1040,78 @@ if (is_dir($imgDir)) {
         gameCtx.arc(x + size * 2, y, size * 0.9, Math.PI * 1.5, Math.PI * 0.5);
         gameCtx.closePath();
         gameCtx.fill();
+    }
+
+    function drawPrincessSprite(x, y, w, h) {
+        const centerX = x + w / 2;
+
+        gameCtx.fillStyle = '#f59e0b';
+        gameCtx.beginPath();
+        gameCtx.moveTo(centerX - 11, y - 4);
+        gameCtx.lineTo(centerX - 5, y - 11);
+        gameCtx.lineTo(centerX, y - 3);
+        gameCtx.lineTo(centerX + 5, y - 11);
+        gameCtx.lineTo(centerX + 11, y - 4);
+        gameCtx.closePath();
+        gameCtx.fill();
+
+        gameCtx.fillStyle = '#7f1d1d';
+        gameCtx.beginPath();
+        gameCtx.arc(centerX, y + 10, 11, Math.PI, 0);
+        gameCtx.fill();
+
+        gameCtx.fillStyle = '#fde2d2';
+        gameCtx.beginPath();
+        gameCtx.arc(centerX, y + 11, 9, 0, Math.PI * 2);
+        gameCtx.fill();
+
+        gameCtx.fillStyle = '#1f2937';
+        gameCtx.fillRect(centerX - 4, y + 10, 2, 2);
+        gameCtx.fillRect(centerX + 2, y + 10, 2, 2);
+
+        const dress = gameCtx.createLinearGradient(x, y + 17, x, y + h);
+        dress.addColorStop(0, '#ec4899');
+        dress.addColorStop(1, '#be185d');
+        gameCtx.fillStyle = dress;
+        gameCtx.beginPath();
+        gameCtx.moveTo(centerX, y + 17);
+        gameCtx.lineTo(x + 3, y + h);
+        gameCtx.lineTo(x + w - 3, y + h);
+        gameCtx.closePath();
+        gameCtx.fill();
+
+        gameCtx.fillStyle = '#fbcfe8';
+        gameCtx.fillRect(centerX - 14, y + 24, 9, 5);
+        gameCtx.fillRect(centerX + 5, y + 24, 9, 5);
+
+        gameCtx.fillStyle = '#9d174d';
+        gameCtx.fillRect(centerX - 10, y + h - 4, 8, 4);
+        gameCtx.fillRect(centerX + 2, y + h - 4, 8, 4);
+    }
+
+    function drawEnemySprite(enemy) {
+        const x = enemy.x;
+        const y = enemy.y;
+        const w = enemy.w;
+        const h = enemy.h;
+
+        const body = gameCtx.createLinearGradient(x, y, x, y + h);
+        body.addColorStop(0, '#be185d');
+        body.addColorStop(1, '#831843');
+        gameCtx.fillStyle = body;
+        gameCtx.beginPath();
+        gameCtx.roundRect(x, y + 4, w, h - 4, 7);
+        gameCtx.fill();
+
+        gameCtx.fillStyle = '#fecdd3';
+        gameCtx.beginPath();
+        gameCtx.arc(x + w * 0.35, y + h * 0.4, 3.2, 0, Math.PI * 2);
+        gameCtx.arc(x + w * 0.65, y + h * 0.4, 3.2, 0, Math.PI * 2);
+        gameCtx.fill();
+
+        gameCtx.fillStyle = '#3f0d23';
+        gameCtx.fillRect(x + w * 0.22, y + h - 4, 8, 4);
+        gameCtx.fillRect(x + w * 0.55, y + h - 4, 8, 4);
     }
 
     function drawGame() {
@@ -994,11 +1158,8 @@ if (is_dir($imgDir)) {
         });
 
         lvl.enemies.forEach(enemy => {
-            gameCtx.fillStyle = '#be185d';
-            gameCtx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
-            gameCtx.fillStyle = '#fecdd3';
-            gameCtx.fillRect(enemy.x + 6, enemy.y + 8, 5, 5);
-            gameCtx.fillRect(enemy.x + 18, enemy.y + 8, 5, 5);
+            if (!enemy.alive) return;
+            drawEnemySprite(enemy);
         });
 
         gameCtx.fillStyle = '#e11d48';
@@ -1009,15 +1170,7 @@ if (is_dir($imgDir)) {
         gameCtx.fillRect(lvl.goal.x + 20, lvl.goal.y - 14, 18, 14);
 
         const p = game.player;
-        gameCtx.fillStyle = '#db2777';
-        gameCtx.fillRect(p.x, p.y + 14, p.w, p.h - 14);
-        gameCtx.fillStyle = '#fecdd3';
-        gameCtx.beginPath();
-        gameCtx.arc(p.x + p.w / 2, p.y + 9, 9, 0, Math.PI * 2);
-        gameCtx.fill();
-        gameCtx.fillStyle = '#f59e0b';
-        gameCtx.fillRect(p.x + 8, p.y - 4, 14, 5);
-        gameCtx.fillRect(p.x + 12, p.y - 9, 6, 5);
+        drawPrincessSprite(p.x, p.y, p.w, p.h);
 
         gameCtx.restore();
     }
