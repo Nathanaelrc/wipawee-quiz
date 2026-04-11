@@ -973,7 +973,7 @@ if (is_dir($imgDir)) {
         game.running = false;
         const isLast = game.currentLevel === game.levels.length - 1;
         if (isLast) {
-            setGameStatus('You completed all princess levels. The royal garden is safe. 💖', '#047857');
+            setGameStatus('My love, I worked on this game to cheer you up when you are tired. I love you so much, and you are my everything. 💖', '#047857');
             $('btn-game-next').disabled = true;
             return;
         }
