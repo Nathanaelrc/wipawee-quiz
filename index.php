@@ -672,7 +672,7 @@ if (is_dir($imgDir)) {
                     <div class="text-center mb-3">
                         <div style="font-size:2.2rem;line-height:1;">👑</div>
                         <h2 class="font-title fw-bold mb-1" style="font-size:clamp(1.5rem,4vw,2rem);color:#a5164d;">Princess Adventure</h2>
-                        <p class="text-secondary mb-0">A princess platform game inspired by classic side-scrollers. Complete all levels to save the royal garden.</p>
+                        <p class="text-secondary mb-0">A game for my beautiful Princess 💖</p>
                     </div>
 
                     <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
@@ -812,6 +812,7 @@ if (is_dir($imgDir)) {
         jumpBoost: false,
         lastJumpTap: 0,
         levelCompleted: false,
+        showFinalMsg: false,
         keys: { left: false, right: false },
         player: { x: 40, y: 80, w: 30, h: 44, vx: 0, vy: 0, onGround: false },
         levels: [
@@ -1036,6 +1037,7 @@ if (is_dir($imgDir)) {
             enemy.alive = true;
         });
         game.levelCompleted = false;
+        game.showFinalMsg = false;
         $('btn-game-next').disabled = true;
         resetPlayerPosition();
         updateGameHud();
@@ -1064,7 +1066,8 @@ if (is_dir($imgDir)) {
         game.running = false;
         const isLast = game.currentLevel === game.levels.length - 1;
         if (isLast) {
-            setGameStatus('My love, I worked on this game to cheer you up when you are tired. I love you so much, and you are my everything. 💖', '#047857');
+            game.showFinalMsg = true;
+            setGameStatus('', '#047857');
             $('btn-game-next').disabled = true;
             return;
         }
@@ -1312,6 +1315,52 @@ if (is_dir($imgDir)) {
         drawPrincessSprite(p.x, p.y, p.w, p.h);
 
         gameCtx.restore();
+
+        if (game.showFinalMsg) {
+            const mx = w * 0.06;
+            const my = h * 0.12;
+            const mw2 = w * 0.88;
+            const mh2 = h * 0.76;
+
+            gameCtx.fillStyle = 'rgba(255, 228, 240, 0.94)';
+            gameCtx.beginPath();
+            gameCtx.roundRect(mx, my, mw2, mh2, 22);
+            gameCtx.fill();
+            gameCtx.strokeStyle = 'rgba(244, 63, 94, 0.45)';
+            gameCtx.lineWidth = 2.5;
+            gameCtx.stroke();
+
+            const titleSize = Math.max(18, Math.round(h * 0.09));
+            gameCtx.fillStyle = '#f59e0b';
+            gameCtx.font = 'bold ' + titleSize + 'px Georgia, serif';
+            gameCtx.textAlign = 'center';
+            gameCtx.textBaseline = 'middle';
+            gameCtx.fillText('\uD83D\uDC51 Congratulations! \uD83D\uDC51', w / 2, my + mh2 * 0.22);
+
+            const bodySize = Math.max(13, Math.round(h * 0.053));
+            gameCtx.font = bodySize + 'px Georgia, serif';
+            gameCtx.fillStyle = '#9f1239';
+            const FINAL_MSG = 'My love, I worked on this game to cheer you up when you are tired. I love you so much, and you are my everything. \u2764\uFE0F';
+            const maxLineW = mw2 * 0.84;
+            const lineHeight = bodySize * 1.65;
+            let lineY = my + mh2 * 0.44;
+            const words = FINAL_MSG.split(' ');
+            let lineBuf = '';
+            words.forEach(word => {
+                const test = lineBuf ? lineBuf + ' ' + word : word;
+                if (gameCtx.measureText(test).width > maxLineW && lineBuf) {
+                    gameCtx.fillText(lineBuf, w / 2, lineY);
+                    lineBuf = word;
+                    lineY += lineHeight;
+                } else {
+                    lineBuf = test;
+                }
+            });
+            if (lineBuf) gameCtx.fillText(lineBuf, w / 2, lineY);
+
+            gameCtx.textBaseline = 'alphabetic';
+            gameCtx.textAlign = 'left';
+        }
     }
 
     function gameLoop() {
