@@ -813,6 +813,7 @@ if (is_dir($imgDir)) {
         lastJumpTap: 0,
         levelCompleted: false,
         showFinalMsg: false,
+        finalMsgStartedAt: 0,
         keys: { left: false, right: false },
         player: { x: 40, y: 80, w: 30, h: 44, vx: 0, vy: 0, onGround: false },
         levels: [
@@ -1038,6 +1039,7 @@ if (is_dir($imgDir)) {
         });
         game.levelCompleted = false;
         game.showFinalMsg = false;
+        game.finalMsgStartedAt = 0;
         $('btn-game-next').disabled = true;
         resetPlayerPosition();
         updateGameHud();
@@ -1067,6 +1069,7 @@ if (is_dir($imgDir)) {
         const isLast = game.currentLevel === game.levels.length - 1;
         if (isLast) {
             game.showFinalMsg = true;
+            game.finalMsgStartedAt = performance.now();
             setGameStatus('', '#047857');
             $('btn-game-next').disabled = true;
             return;
@@ -1317,18 +1320,57 @@ if (is_dir($imgDir)) {
         gameCtx.restore();
 
         if (game.showFinalMsg) {
+            const now = performance.now();
+            const elapsed = Math.max(0, now - (game.finalMsgStartedAt || now));
+            const fade = Math.min(1, elapsed / 700);
+            const eased = 1 - Math.pow(1 - fade, 3);
+            const pop = 0.95 + (0.05 * eased);
+
             const mx = w * 0.06;
             const my = h * 0.12;
             const mw2 = w * 0.88;
             const mh2 = h * 0.76;
 
-            gameCtx.fillStyle = 'rgba(255, 228, 240, 0.94)';
+            gameCtx.save();
+
+            gameCtx.fillStyle = `rgba(35, 19, 43, ${0.12 * fade})`;
+            gameCtx.fillRect(0, 0, w, h);
+
+            gameCtx.globalAlpha = fade;
+            gameCtx.translate(w / 2, h / 2);
+            gameCtx.scale(pop, pop);
+            gameCtx.translate(-w / 2, -h / 2);
+
+            const grad = gameCtx.createLinearGradient(mx, my, mx, my + mh2);
+            grad.addColorStop(0, 'rgba(255, 238, 246, 0.97)');
+            grad.addColorStop(1, 'rgba(255, 228, 240, 0.95)');
+            gameCtx.fillStyle = grad;
             gameCtx.beginPath();
             gameCtx.roundRect(mx, my, mw2, mh2, 22);
             gameCtx.fill();
-            gameCtx.strokeStyle = 'rgba(244, 63, 94, 0.45)';
+            gameCtx.strokeStyle = 'rgba(244, 63, 94, 0.5)';
             gameCtx.lineWidth = 2.5;
             gameCtx.stroke();
+
+            const sparkleTime = now / 650;
+            const sparkles = [
+                { x: mx + 18, y: my + 18, r: 8 },
+                { x: mx + mw2 - 20, y: my + 22, r: 7 },
+                { x: mx + mw2 - 28, y: my + mh2 - 20, r: 9 },
+                { x: mx + 25, y: my + mh2 - 22, r: 7 }
+            ];
+
+            sparkles.forEach((s, idx) => {
+                const pulse = 0.75 + 0.25 * Math.sin(sparkleTime + idx * 0.9);
+                gameCtx.strokeStyle = `rgba(245, 158, 11, ${0.65 * pulse})`;
+                gameCtx.lineWidth = 2;
+                gameCtx.beginPath();
+                gameCtx.moveTo(s.x - s.r, s.y);
+                gameCtx.lineTo(s.x + s.r, s.y);
+                gameCtx.moveTo(s.x, s.y - s.r);
+                gameCtx.lineTo(s.x, s.y + s.r);
+                gameCtx.stroke();
+            });
 
             const titleSize = Math.max(18, Math.round(h * 0.09));
             gameCtx.fillStyle = '#f59e0b';
@@ -1358,8 +1400,10 @@ if (is_dir($imgDir)) {
             });
             if (lineBuf) gameCtx.fillText(lineBuf, w / 2, lineY);
 
+            gameCtx.restore();
             gameCtx.textBaseline = 'alphabetic';
             gameCtx.textAlign = 'left';
+            gameCtx.globalAlpha = 1;
         }
     }
 
