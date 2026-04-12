@@ -93,6 +93,22 @@ if (is_dir($imgDir)) {
                 radial-gradient(circle at 30% 85%, rgba(244, 63, 94, 0.22), transparent 34%),
                 linear-gradient(130deg, #fff6fb 0%, #fff0f6 48%, #fff7e9 100%);
             overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: -30% -20%;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.45), transparent 16%),
+                radial-gradient(circle at 72% 28%, rgba(255, 255, 255, 0.35), transparent 12%),
+                radial-gradient(circle at 42% 72%, rgba(255, 255, 255, 0.3), transparent 14%),
+                radial-gradient(circle at 88% 76%, rgba(255, 255, 255, 0.26), transparent 10%);
+            animation: bgTwinkle 8.4s ease-in-out infinite;
+            mix-blend-mode: screen;
         }
 
         .font-title {
@@ -166,6 +182,22 @@ if (is_dir($imgDir)) {
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             box-shadow: 0 20px 46px rgba(66, 25, 52, 0.12);
+            position: relative;
+            overflow: hidden;
+            animation: cardGlowPulse 5.8s ease-in-out infinite;
+        }
+
+        .card-romantic::after {
+            content: '';
+            position: absolute;
+            top: -120%;
+            left: -40%;
+            width: 56%;
+            height: 300%;
+            background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.34) 48%, transparent 100%);
+            transform: rotate(18deg);
+            animation: sheenSweep 7.2s linear infinite;
+            pointer-events: none;
         }
 
         .fade-in {
@@ -197,6 +229,43 @@ if (is_dir($imgDir)) {
             70% { transform: translateX(-5px); }
         }
 
+        @keyframes bgTwinkle {
+            0%, 100% { opacity: 0.45; transform: translate3d(0, 0, 0) scale(1); }
+            50% { opacity: 0.78; transform: translate3d(-1.5%, -1.2%, 0) scale(1.03); }
+        }
+
+        @keyframes cardGlowPulse {
+            0%, 100% { box-shadow: 0 20px 46px rgba(66, 25, 52, 0.12); }
+            50% { box-shadow: 0 20px 46px rgba(66, 25, 52, 0.12), 0 0 34px rgba(244, 63, 94, 0.16); }
+        }
+
+        @keyframes sheenSweep {
+            0% { transform: translateX(-180%) rotate(18deg); }
+            100% { transform: translateX(330%) rotate(18deg); }
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0)); }
+            50% { filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.26)); }
+        }
+
+        @keyframes answerPulseGood {
+            0% { transform: scale(1); }
+            35% { transform: scale(1.015); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes answerPulseBad {
+            0% { transform: scale(1); }
+            35% { transform: scale(0.994); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes burstOut {
+            0% { opacity: 1; transform: translate(0, 0) scale(0.7); }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.45); }
+        }
+
         .btn-love {
             color: #fff;
             border: none;
@@ -222,6 +291,11 @@ if (is_dir($imgDir)) {
             font-weight: 700;
             background: linear-gradient(135deg, #f59e0b, #fbbf24);
             box-shadow: 0 10px 24px rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-love,
+        .btn-gold {
+            animation: buttonGlow 3.8s ease-in-out infinite;
         }
 
         .audio-toggle {
@@ -361,12 +435,28 @@ if (is_dir($imgDir)) {
             background: rgba(255, 255, 255, 0.74);
             transition: all 0.2s ease;
             font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-respuesta::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+            transform: translateX(-140%);
+            transition: transform 0.48s ease;
+            pointer-events: none;
         }
 
         .btn-respuesta:hover:not(:disabled) {
             transform: translateY(-1px);
             border-color: var(--rose-1);
             box-shadow: 0 8px 20px rgba(244, 63, 94, 0.14);
+        }
+
+        .btn-respuesta:hover:not(:disabled)::after {
+            transform: translateX(135%);
         }
 
         .btn-respuesta:disabled {
@@ -383,6 +473,43 @@ if (is_dir($imgDir)) {
             background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
             border-color: #ef4444 !important;
             color: #7f1d1d;
+        }
+
+        #tarjeta-pregunta.answer-glow-good {
+            animation: answerPulseGood 0.8s ease;
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.34), 0 0 38px rgba(16, 185, 129, 0.42);
+        }
+
+        #tarjeta-pregunta.answer-glow-bad {
+            animation: answerPulseBad 0.8s ease;
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.33), 0 0 34px rgba(239, 68, 68, 0.33);
+        }
+
+        #feedback.glow-good {
+            text-shadow: 0 0 12px rgba(16, 185, 129, 0.55);
+        }
+
+        #feedback.glow-bad {
+            text-shadow: 0 0 12px rgba(239, 68, 68, 0.48);
+        }
+
+        .quiz-burst {
+            position: absolute;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            pointer-events: none;
+            left: 50%;
+            top: 48%;
+            animation: burstOut 0.82s ease forwards;
+        }
+
+        .quiz-burst.good {
+            background: radial-gradient(circle, #6ee7b7 0%, #34d399 72%, rgba(16, 185, 129, 0) 100%);
+        }
+
+        .quiz-burst.bad {
+            background: radial-gradient(circle, #fda4af 0%, #ef4444 72%, rgba(239, 68, 68, 0) 100%);
         }
 
         .puzzle-board {
@@ -1678,6 +1805,7 @@ if (is_dir($imgDir)) {
         const feedback = $('feedback');
         feedback.style.opacity = '0';
         feedback.textContent = '';
+        feedback.classList.remove('glow-good', 'glow-bad');
 
         const contenedor = $('contenedor-opciones');
         contenedor.innerHTML = '';
@@ -1691,9 +1819,42 @@ if (is_dir($imgDir)) {
         });
 
         const tarjeta = $('tarjeta-pregunta');
+        tarjeta.classList.remove('answer-glow-good', 'answer-glow-bad');
         tarjeta.classList.remove('slide-in');
         void tarjeta.offsetWidth;
         tarjeta.classList.add('slide-in');
+    }
+
+    function aplicarGlowRespuesta(esCorrecta) {
+        const tarjeta = $('tarjeta-pregunta');
+        const feedback = $('feedback');
+
+        tarjeta.classList.remove('answer-glow-good', 'answer-glow-bad');
+        feedback.classList.remove('glow-good', 'glow-bad');
+
+        const glowClass = esCorrecta ? 'answer-glow-good' : 'answer-glow-bad';
+        const feedbackClass = esCorrecta ? 'glow-good' : 'glow-bad';
+        tarjeta.classList.add(glowClass);
+        feedback.classList.add(feedbackClass);
+
+        const total = 14;
+        for (let i = 0; i < total; i++) {
+            const burst = document.createElement('span');
+            burst.className = `quiz-burst ${esCorrecta ? 'good' : 'bad'}`;
+            const angle = (Math.PI * 2 * i) / total;
+            const distance = 34 + Math.random() * 58;
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+            burst.style.setProperty('--dx', `${dx}px`);
+            burst.style.setProperty('--dy', `${dy}px`);
+            burst.style.animationDelay = `${Math.random() * 0.08}s`;
+            tarjeta.appendChild(burst);
+            setTimeout(() => burst.remove(), 900);
+        }
+
+        setTimeout(() => {
+            tarjeta.classList.remove(glowClass);
+        }, 860);
     }
 
     function manejarRespuesta(seleccionado, btnSeleccionado) {
@@ -1711,11 +1872,13 @@ if (is_dir($imgDir)) {
             btnSeleccionado.classList.add('correcta');
             feedback.innerHTML = '<span style="color:#059669;">✅ Correct, my love.</span>';
             reproducirAcierto();
+            aplicarGlowRespuesta(true);
         } else {
             btnSeleccionado.classList.add('incorrecta');
             botones[q.correcta].classList.add('correcta');
             feedback.innerHTML = '<span style="color:#dc2626;">💔 Almost, check the highlighted answer.</span>';
             reproducirError();
+            aplicarGlowRespuesta(false);
             const tarjeta = $('tarjeta-pregunta');
             tarjeta.classList.remove('shake');
             void tarjeta.offsetWidth;
