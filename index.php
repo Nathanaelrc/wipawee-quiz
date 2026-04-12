@@ -300,15 +300,28 @@ if (is_dir($imgDir)) {
 
         .game-touch-controls {
             display: none;
-            gap: 0.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: stretch;
             margin-bottom: 0.4rem;
+            gap: 0.8rem;
+        }
+
+        .touch-pad-left {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(58px, 1fr));
+            gap: 0.55rem;
+            flex: 1;
+        }
+
+        .touch-pad-right {
+            width: min(38vw, 156px);
+            display: flex;
+            justify-content: flex-end;
         }
 
         .game-touch-btn {
-            min-width: 68px;
-            min-height: 48px;
+            min-width: 58px;
+            min-height: 52px;
             border: none;
             border-radius: 0.9rem;
             color: #fff;
@@ -316,6 +329,13 @@ if (is_dir($imgDir)) {
             background: linear-gradient(135deg, #f43f5e, #fb7185);
             box-shadow: 0 8px 18px rgba(244, 63, 94, 0.24);
             touch-action: manipulation;
+        }
+
+        .game-touch-btn.jump {
+            width: 100%;
+            min-height: 56px;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            box-shadow: 0 8px 18px rgba(245, 158, 11, 0.32);
         }
 
         .progress-shell {
@@ -463,6 +483,39 @@ if (is_dir($imgDir)) {
 
             .princess-canvas {
                 border-radius: 0.85rem;
+            }
+
+            .tab-shell {
+                margin-bottom: 0.65rem !important;
+            }
+
+            .tab-love {
+                flex-wrap: nowrap;
+            }
+
+            .tab-love .nav-link {
+                white-space: nowrap;
+                font-size: 0.83rem;
+            }
+
+            .princess-game-card {
+                padding: 0.62rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 0.45rem !important;
+                padding-bottom: 0.8rem !important;
+            }
+
+            .container {
+                padding-left: 0.35rem;
+                padding-right: 0.35rem;
+            }
+
+            .game-chip {
+                font-size: 0.76rem;
             }
         }
     </style>
@@ -628,7 +681,7 @@ if (is_dir($imgDir)) {
                         <span class="game-chip">Stars: <span id="game-stars">0</span></span>
                     </div>
 
-                    <canvas id="princess-game-canvas" class="princess-canvas" width="900" height="340" aria-label="Princess platform game"></canvas>
+                    <canvas id="princess-game-canvas" class="princess-canvas" width="960" height="420" aria-label="Princess platform game"></canvas>
 
                     <p id="game-status" class="text-center fw-semibold mt-3 mb-3" style="color:#9f1239;">Press Start to begin your adventure.</p>
 
@@ -639,12 +692,16 @@ if (is_dir($imgDir)) {
                     </div>
 
                     <div class="game-touch-controls" aria-label="Touch controls for mobile">
-                        <button id="btn-touch-left" class="game-touch-btn" type="button">←</button>
-                        <button id="btn-touch-jump" class="game-touch-btn" type="button">JUMP</button>
-                        <button id="btn-touch-right" class="game-touch-btn" type="button">→</button>
+                        <div class="touch-pad-left">
+                            <button id="btn-touch-left" class="game-touch-btn" type="button">←</button>
+                            <button id="btn-touch-right" class="game-touch-btn" type="button">→</button>
+                        </div>
+                        <div class="touch-pad-right">
+                            <button id="btn-touch-jump" class="game-touch-btn jump" type="button">JUMP</button>
+                        </div>
                     </div>
 
-                    <p class="text-center text-secondary mb-0" style="font-size:.9rem;">Controls: <strong>A / D</strong> or <strong>← / →</strong> to move, <strong>W / Space / ↑</strong> to jump. On mobile use the touch buttons.</p>
+                    <p class="text-center text-secondary mb-0" style="font-size:.9rem;">Controls: <strong>A / D</strong> or <strong>← / →</strong> to move, <strong>W / Space / ↑</strong> to jump. On mobile use touch buttons and double tap JUMP for a higher jump.</p>
                 </div>
             </div>
         </div>
@@ -749,39 +806,48 @@ if (is_dir($imgDir)) {
         lives: 3,
         stars: 0,
         cameraX: 0,
+        viewScale: 1,
+        isMobileView: false,
         jumpQueued: false,
+        jumpBoost: false,
+        lastJumpTap: 0,
         levelCompleted: false,
         keys: { left: false, right: false },
         player: { x: 40, y: 80, w: 30, h: 44, vx: 0, vy: 0, onGround: false },
         levels: [
             {
-                worldWidth: 1700,
+                worldWidth: 2050,
                 spawn: { x: 46, y: 180 },
-                goal: { x: 1600, y: 198, w: 48, h: 82 },
+                goal: { x: 1940, y: 198, w: 48, h: 82 },
                 platforms: [
                     { x: 0, y: 280, w: 360, h: 60 },
                     { x: 420, y: 280, w: 360, h: 60 },
                     { x: 840, y: 280, w: 390, h: 60 },
                     { x: 1280, y: 280, w: 420, h: 60 },
+                    { x: 1740, y: 280, w: 310, h: 60 },
                     { x: 210, y: 220, w: 120, h: 16 },
                     { x: 620, y: 210, w: 130, h: 16 },
-                    { x: 1010, y: 205, w: 120, h: 16 }
+                    { x: 1010, y: 205, w: 120, h: 16 },
+                    { x: 1820, y: 220, w: 120, h: 16 }
                 ],
                 stars: [
                     { x: 260, y: 188, taken: false },
                     { x: 670, y: 178, taken: false },
                     { x: 1060, y: 174, taken: false },
-                    { x: 1450, y: 242, taken: false }
+                    { x: 1450, y: 242, taken: false },
+                    { x: 1860, y: 188, taken: false },
+                    { x: 1980, y: 246, taken: false }
                 ],
                 enemies: [
                     { x: 520, y: 248, w: 30, h: 32, minX: 460, maxX: 730, speed: 1.3, dir: 1 },
-                    { x: 1160, y: 248, w: 30, h: 32, minX: 950, maxX: 1220, speed: 1.5, dir: -1 }
+                    { x: 1160, y: 248, w: 30, h: 32, minX: 950, maxX: 1220, speed: 1.5, dir: -1 },
+                    { x: 1890, y: 248, w: 30, h: 32, minX: 1770, maxX: 2010, speed: 1.6, dir: -1 }
                 ]
             },
             {
-                worldWidth: 2000,
+                worldWidth: 2350,
                 spawn: { x: 46, y: 170 },
-                goal: { x: 1900, y: 178, w: 48, h: 102 },
+                goal: { x: 2240, y: 178, w: 48, h: 102 },
                 platforms: [
                     { x: 0, y: 280, w: 310, h: 60 },
                     { x: 360, y: 260, w: 220, h: 80 },
@@ -789,24 +855,29 @@ if (is_dir($imgDir)) {
                     { x: 860, y: 280, w: 250, h: 60 },
                     { x: 1170, y: 248, w: 220, h: 92 },
                     { x: 1460, y: 210, w: 180, h: 18 },
-                    { x: 1700, y: 280, w: 300, h: 60 }
+                    { x: 1700, y: 280, w: 300, h: 60 },
+                    { x: 2040, y: 280, w: 310, h: 60 },
+                    { x: 2120, y: 220, w: 150, h: 18 }
                 ],
                 stars: [
                     { x: 430, y: 224, taken: false },
                     { x: 700, y: 188, taken: false },
                     { x: 1260, y: 210, taken: false },
                     { x: 1520, y: 174, taken: false },
-                    { x: 1800, y: 246, taken: false }
+                    { x: 1800, y: 246, taken: false },
+                    { x: 2165, y: 188, taken: false },
+                    { x: 2280, y: 246, taken: false }
                 ],
                 enemies: [
                     { x: 930, y: 248, w: 30, h: 32, minX: 900, maxX: 1060, speed: 1.8, dir: 1 },
-                    { x: 1750, y: 248, w: 30, h: 32, minX: 1720, maxX: 1920, speed: 1.65, dir: -1 }
+                    { x: 1750, y: 248, w: 30, h: 32, minX: 1720, maxX: 1920, speed: 1.65, dir: -1 },
+                    { x: 2190, y: 248, w: 30, h: 32, minX: 2070, maxX: 2330, speed: 1.9, dir: 1 }
                 ]
             },
             {
-                worldWidth: 2300,
+                worldWidth: 2650,
                 spawn: { x: 50, y: 130 },
-                goal: { x: 2200, y: 120, w: 56, h: 160 },
+                goal: { x: 2540, y: 120, w: 56, h: 160 },
                 platforms: [
                     { x: 0, y: 280, w: 260, h: 60 },
                     { x: 320, y: 248, w: 190, h: 92 },
@@ -816,7 +887,9 @@ if (is_dir($imgDir)) {
                     { x: 1260, y: 195, w: 170, h: 20 },
                     { x: 1490, y: 165, w: 170, h: 20 },
                     { x: 1730, y: 220, w: 200, h: 120 },
-                    { x: 1980, y: 280, w: 320, h: 60 }
+                    { x: 1980, y: 280, w: 320, h: 60 },
+                    { x: 2340, y: 280, w: 310, h: 60 },
+                    { x: 2410, y: 210, w: 160, h: 18 }
                 ],
                 stars: [
                     { x: 390, y: 210, taken: false },
@@ -825,18 +898,20 @@ if (is_dir($imgDir)) {
                     { x: 1320, y: 160, taken: false },
                     { x: 1560, y: 130, taken: false },
                     { x: 1810, y: 186, taken: false },
-                    { x: 2100, y: 242, taken: false }
+                    { x: 2100, y: 242, taken: false },
+                    { x: 2480, y: 176, taken: false }
                 ],
                 enemies: [
                     { x: 350, y: 216, w: 30, h: 32, minX: 330, maxX: 470, speed: 1.9, dir: 1 },
                     { x: 1040, y: 203, w: 30, h: 32, minX: 1020, maxX: 1160, speed: 2, dir: -1 },
-                    { x: 2000, y: 248, w: 30, h: 32, minX: 1990, maxX: 2240, speed: 2.15, dir: 1 }
+                    { x: 2000, y: 248, w: 30, h: 32, minX: 1990, maxX: 2240, speed: 2.15, dir: 1 },
+                    { x: 2470, y: 248, w: 30, h: 32, minX: 2360, maxX: 2600, speed: 2.2, dir: -1 }
                 ]
             },
             {
-                worldWidth: 2500,
+                worldWidth: 2900,
                 spawn: { x: 50, y: 145 },
-                goal: { x: 2390, y: 150, w: 56, h: 130 },
+                goal: { x: 2780, y: 150, w: 56, h: 130 },
                 platforms: [
                     { x: 0, y: 280, w: 220, h: 60 },
                     { x: 280, y: 245, w: 160, h: 95 },
@@ -848,7 +923,9 @@ if (is_dir($imgDir)) {
                     { x: 1620, y: 200, w: 200, h: 140 },
                     { x: 1880, y: 170, w: 160, h: 20 },
                     { x: 2100, y: 220, w: 190, h: 120 },
-                    { x: 2330, y: 280, w: 170, h: 60 }
+                    { x: 2330, y: 280, w: 170, h: 60 },
+                    { x: 2540, y: 245, w: 160, h: 95 },
+                    { x: 2750, y: 280, w: 150, h: 60 }
                 ],
                 stars: [
                     { x: 340, y: 206, taken: false },
@@ -858,19 +935,22 @@ if (is_dir($imgDir)) {
                     { x: 1460, y: 118, taken: false },
                     { x: 1690, y: 168, taken: false },
                     { x: 1940, y: 138, taken: false },
-                    { x: 2160, y: 188, taken: false }
+                    { x: 2160, y: 188, taken: false },
+                    { x: 2600, y: 210, taken: false },
+                    { x: 2820, y: 246, taken: false }
                 ],
                 enemies: [
                     { x: 300, y: 213, w: 30, h: 32, minX: 290, maxX: 430, speed: 2, dir: 1 },
                     { x: 940, y: 188, w: 30, h: 32, minX: 925, maxX: 1070, speed: 2.1, dir: -1 },
                     { x: 1640, y: 168, w: 30, h: 32, minX: 1635, maxX: 1790, speed: 2.2, dir: 1 },
-                    { x: 2130, y: 188, w: 30, h: 32, minX: 2115, maxX: 2270, speed: 2.25, dir: -1 }
+                    { x: 2130, y: 188, w: 30, h: 32, minX: 2115, maxX: 2270, speed: 2.25, dir: -1 },
+                    { x: 2580, y: 213, w: 30, h: 32, minX: 2550, maxX: 2690, speed: 2.3, dir: 1 }
                 ]
             },
             {
-                worldWidth: 2850,
+                worldWidth: 3300,
                 spawn: { x: 50, y: 160 },
-                goal: { x: 2730, y: 135, w: 60, h: 145 },
+                goal: { x: 3180, y: 135, w: 60, h: 145 },
                 platforms: [
                     { x: 0, y: 280, w: 210, h: 60 },
                     { x: 260, y: 240, w: 170, h: 100 },
@@ -884,7 +964,9 @@ if (is_dir($imgDir)) {
                     { x: 1990, y: 140, w: 150, h: 24 },
                     { x: 2200, y: 105, w: 150, h: 24 },
                     { x: 2410, y: 170, w: 190, h: 170 },
-                    { x: 2650, y: 280, w: 200, h: 60 }
+                    { x: 2650, y: 280, w: 200, h: 60 },
+                    { x: 2900, y: 245, w: 170, h: 95 },
+                    { x: 3120, y: 280, w: 180, h: 60 }
                 ],
                 stars: [
                     { x: 320, y: 200, taken: false },
@@ -896,17 +978,26 @@ if (is_dir($imgDir)) {
                     { x: 2030, y: 110, taken: false },
                     { x: 2240, y: 76, taken: false },
                     { x: 2470, y: 136, taken: false },
-                    { x: 2700, y: 242, taken: false }
+                    { x: 2700, y: 242, taken: false },
+                    { x: 2960, y: 210, taken: false },
+                    { x: 3210, y: 246, taken: false }
                 ],
                 enemies: [
                     { x: 290, y: 208, w: 30, h: 32, minX: 275, maxX: 415, speed: 2.2, dir: 1 },
                     { x: 1130, y: 158, w: 30, h: 32, minX: 1110, maxX: 1240, speed: 2.35, dir: -1 },
                     { x: 1770, y: 143, w: 30, h: 32, minX: 1760, maxX: 1900, speed: 2.45, dir: 1 },
-                    { x: 2430, y: 138, w: 30, h: 32, minX: 2420, maxX: 2580, speed: 2.55, dir: -1 }
+                    { x: 2430, y: 138, w: 30, h: 32, minX: 2420, maxX: 2580, speed: 2.55, dir: -1 },
+                    { x: 2940, y: 213, w: 30, h: 32, minX: 2920, maxX: 3050, speed: 2.6, dir: 1 }
                 ]
             }
         ]
     };
+
+    function updateGameViewport() {
+        if (!gameCanvas) return;
+        game.isMobileView = window.matchMedia('(max-width: 768px)').matches;
+        game.viewScale = game.isMobileView ? 1.3 : 1;
+    }
 
     function updateGameHud() {
         if (!gameCanvas) return;
@@ -993,8 +1084,9 @@ if (is_dir($imgDir)) {
         if (game.keys.right) player.vx = 3.5;
 
         if (game.jumpQueued && player.onGround) {
-            player.vy = -10.8;
+            player.vy = game.jumpBoost ? -14.2 : -10.8;
             player.onGround = false;
+            game.jumpBoost = false;
         }
         game.jumpQueued = false;
 
@@ -1025,7 +1117,8 @@ if (is_dir($imgDir)) {
         if (player.x < 0) player.x = 0;
         if (player.x + player.w > lvl.worldWidth) player.x = lvl.worldWidth - player.w;
 
-        if (player.y > gameCanvas.height + 120) {
+        const viewHeight = gameCanvas.height / game.viewScale;
+        if (player.y > viewHeight + 120) {
             loseLife('You fell from the castle path.');
             return;
         }
@@ -1072,8 +1165,9 @@ if (is_dir($imgDir)) {
             completeLevel();
         }
 
-        const maxCamera = Math.max(0, lvl.worldWidth - gameCanvas.width);
-        game.cameraX = Math.max(0, Math.min(maxCamera, player.x - gameCanvas.width * 0.35));
+        const viewWidth = gameCanvas.width / game.viewScale;
+        const maxCamera = Math.max(0, lvl.worldWidth - viewWidth);
+        game.cameraX = Math.max(0, Math.min(maxCamera, player.x - viewWidth * 0.35));
     }
 
     function drawCloud(x, y, size) {
@@ -1177,8 +1271,10 @@ if (is_dir($imgDir)) {
         drawCloud(690 - parallax * 0.7, 84, 14);
 
         const lvl = levelData();
+        const scale = game.viewScale;
 
         gameCtx.save();
+        gameCtx.scale(scale, scale);
         gameCtx.translate(-game.cameraX, 0);
 
         gameCtx.fillStyle = '#f9a8d4';
@@ -1739,6 +1835,7 @@ if (is_dir($imgDir)) {
         if (key === 'arrowleft' || key === 'a') game.keys.left = true;
         if (key === 'arrowright' || key === 'd') game.keys.right = true;
         if (key === 'arrowup' || key === 'w' || key === ' ') {
+            game.jumpBoost = false;
             game.jumpQueued = true;
         }
         if (['arrowleft', 'arrowright', 'arrowup', ' ', 'a', 'd', 'w'].includes(key)) {
@@ -1750,6 +1847,10 @@ if (is_dir($imgDir)) {
         const key = event.key.toLowerCase();
         if (key === 'arrowleft' || key === 'a') game.keys.left = false;
         if (key === 'arrowright' || key === 'd') game.keys.right = false;
+    });
+
+    window.addEventListener('resize', () => {
+        updateGameViewport();
     });
 
     function bindTouchControl(buttonId, onPress, onRelease) {
@@ -1802,13 +1903,19 @@ if (is_dir($imgDir)) {
     });
 
     if (gameCanvas) {
+        updateGameViewport();
         $('btn-game-start').addEventListener('click', startPrincessGame);
         $('btn-game-restart').addEventListener('click', restartPrincessLevel);
         $('btn-game-next').addEventListener('click', nextPrincessLevel);
 
         bindTouchControl('btn-touch-left', () => { game.keys.left = true; }, () => { game.keys.left = false; });
         bindTouchControl('btn-touch-right', () => { game.keys.right = true; }, () => { game.keys.right = false; });
-        bindTouchControl('btn-touch-jump', () => { game.jumpQueued = true; }, () => {});
+        bindTouchControl('btn-touch-jump', () => {
+            const now = Date.now();
+            game.jumpBoost = (now - game.lastJumpTap) < 260;
+            game.lastJumpTap = now;
+            game.jumpQueued = true;
+        }, () => {});
 
         updateGameHud();
         drawGame();
