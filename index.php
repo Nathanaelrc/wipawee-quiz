@@ -630,6 +630,54 @@ if (is_dir($imgDir)) {
             }
         }
 
+        .memory-card {
+            width: 90px;
+            height: 90px;
+            border-radius: 0.85rem;
+            border: 2px solid rgba(244, 63, 94, 0.3);
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            transition: all 0.25s ease;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 8px 18px rgba(244, 63, 94, 0.2);
+        }
+
+        .memory-card:hover:not(.matched) {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(244, 63, 94, 0.3);
+        }
+
+        .memory-card.flipped {
+            background: linear-gradient(135deg, #fde2e2, #fecaca);
+            border-color: rgba(244, 63, 94, 0.6);
+        }
+
+        .memory-card.matched {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border-color: #10b981;
+            cursor: default;
+            animation: matchPulse 0.5s ease;
+        }
+
+        @keyframes matchPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .memory-card-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         @media (max-width: 480px) {
             body {
                 padding-top: 0.45rem !important;
@@ -671,6 +719,9 @@ if (is_dir($imgDir)) {
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="tab-game-btn" data-bs-toggle="tab" data-bs-target="#tab-princess" type="button" role="tab" aria-controls="tab-princess" aria-selected="false">Princess Adventure</button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-memory-btn" data-bs-toggle="tab" data-bs-target="#tab-memory" type="button" role="tab" aria-controls="tab-memory" aria-selected="false">Memory Game 💞</button>
+                </li>
             </ul>
         </div>
 
@@ -678,13 +729,16 @@ if (is_dir($imgDir)) {
             <div class="tab-pane fade show active" id="tab-quiz" role="tabpanel" aria-labelledby="tab-quiz-btn" tabindex="0">
                 <div class="quiz-pane-wrap">
         <div id="screen-inicio" class="card-romantic p-4 p-md-5 text-center fade-in">
-            <div style="font-size: 3.4rem; line-height:1;">💌</div>
+            <div style="font-size: 3.4rem; line-height:1;">&#x1F496;</div>
             <h1 class="font-title fw-bold mb-2" style="font-size: clamp(1.9rem, 6vw, 2.6rem); color: #a5164d;">
-                Our Story, Question by Question
+                Happy Anniversary, My Love 🌹
             </h1>
+            <p class="font-title fst-italic mb-1" style="color:#be185d; font-size:clamp(1rem,3.5vw,1.2rem);">
+                1 year &amp; 10 months loving you with everything I have 💕
+            </p>
             <p class="mx-auto text-secondary mb-4" style="max-width: 480px; line-height: 1.75;">
-                Answer the <strong>8 new questions</strong>, beat the puzzle challenge with our photos,
-                and unlock your final anniversary letter. 💖
+                I prepared <strong>8 little questions just for you</strong>, a puzzle of our photos,
+                and a letter written straight from my heart. You are my everything, baby. 💖
             </p>
 
             <div class="d-flex justify-content-center gap-4 gap-md-5 mb-4 flex-wrap">
@@ -702,7 +756,20 @@ if (is_dir($imgDir)) {
                 </div>
             </div>
 
-            <button id="btn-iniciar" class="btn btn-love">Start Experience 💕</button>
+            <?php
+            $fotosNuevas = array_values(array_filter($imagenesPuzzle, fn($f) => preg_match('/^img\/im\d/', $f)));
+            if (!empty($fotosNuevas)):
+            ?>
+            <div class="d-flex justify-content-center gap-3 mb-4">
+                <?php foreach ($fotosNuevas as $foto): ?>
+                <div style="width:88px;height:88px;border-radius:50%;overflow:hidden;border:3px solid rgba(244,63,94,0.35);box-shadow:0 8px 22px rgba(244,63,94,0.22);flex-shrink:0;">
+                    <img src="<?php echo htmlspecialchars($foto, ENT_QUOTES, 'UTF-8'); ?>" alt="Our memory" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+
+            <button id="btn-iniciar" class="btn btn-love">Open my heart for you 💌</button>
         </div>
 
         <div id="screen-quiz" class="d-none">
@@ -831,6 +898,31 @@ if (is_dir($imgDir)) {
                     <p class="text-center text-secondary mb-0" style="font-size:.9rem;">Controls: <strong>A / D</strong> or <strong>← / →</strong> to move, <strong>W / Space / ↑</strong> to jump. On mobile use touch buttons and double tap JUMP for a higher jump.</p>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="tab-memory" role="tabpanel" aria-labelledby="tab-memory-btn" tabindex="0">
+                <div class="card-romantic p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div style="font-size:2.5rem;line-height:1;">💞</div>
+                        <h2 class="font-title fw-bold mb-1" style="font-size:clamp(1.5rem,4vw,2rem);color:#a5164d;">Memory of Our Love</h2>
+                        <p class="text-secondary mb-0">Find matching pairs - personalized just for us 💕</p>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+                        <span class="game-chip">Matches: <span id="memory-matches">0</span> / <span id="memory-total">6</span></span>
+                        <span class="game-chip">Moves: <span id="memory-moves">0</span></span>
+                        <span class="game-chip">Score: <span id="memory-score">0</span>%</span>
+                    </div>
+
+                    <div id="memory-board" class="d-flex justify-content-center flex-wrap gap-3 mb-4" style="max-width:500px;margin:0 auto;"></div>
+
+                    <div class="text-center">
+                        <button id="btn-memory-start" class="btn btn-love me-2">Start Game</button>
+                        <button id="btn-memory-restart" class="btn btn-gold">Restart</button>
+                    </div>
+
+                    <p id="memory-status" class="text-center fw-semibold mt-4 mb-0" style="color:#9f1239;min-height:24px;"></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -841,54 +933,92 @@ if (is_dir($imgDir)) {
 
     const preguntas = [
         {
-            pregunta: 'a) How many years together will we celebrate in July 2026?',
-            opciones: ['1 year', '2 years', '3 years', '4 years'],
-            correcta: 1
-        },
-        {
-            pregunta: 'b) What do I love most about our calls?',
+            pregunta: '1) How long have we been together?',
             opciones: [
-                'Only seeing you on camera',
-                'Hearing your voice, seeing your smile, and listening to what you say',
-                'Talking about work',
-                'Keeping them short'
+                '8 months',
+                '1 year and 2 months',
+                '1 year and 10 months',
+                '2 years and 3 months',
+                '6 months'
             ],
-            correcta: 1
-        },
-        {
-            pregunta: 'c) Which shoulder hurts me in winter?',
-            opciones: ['Right', 'Left', 'Both', 'None'],
-            correcta: 1
-        },
-        {
-            pregunta: 'd) Which food can I not eat?',
-            opciones: ['Tomatoes', 'Garlic', 'Onions', 'Peppers'],
             correcta: 2
         },
         {
-            pregunta: 'e) What is my field of study?',
-            opciones: ['Civil Engineering', 'Cybersecurity Engineering', 'Digital Design', 'Medicine'],
-            correcta: 1
+            pregunta: '2) What is my favorite color?',
+            opciones: [
+                'Light blue',
+                'Red',
+                'Dark green',
+                'Dark blue',
+                'Black'
+            ],
+            correcta: 3
         },
         {
-            pregunta: 'f) In which month was I born?',
-            opciones: ['January', 'February', 'March', 'April'],
-            correcta: 1
+            pregunta: '3) What color are my eyes?',
+            opciones: [
+                'Green',
+                'Light brown',
+                'Blue',
+                'Black',
+                'Dark brown'
+            ],
+            correcta: 4
         },
         {
-            pregunta: 'g) What do I love most about your personality?',
+            pregunta: '4) What food do I dislike?',
+            opciones: [
+                'Tomatoes',
+                'Garlic',
+                'Peppers',
+                'Onions',
+                'Mushrooms'
+            ],
+            correcta: 3
+        },
+        {
+            pregunta: '5) On what day did I ask you to be my girlfriend?',
+            opciones: [
+                'July 5th',
+                'July 20th',
+                'June 10th',
+                'August 14th',
+                'July 10th'
+            ],
+            correcta: 4
+        },
+        {
+            pregunta: '6) What color are my glasses?',
+            opciones: [
+                'Brown',
+                'Silver',
+                'Blue',
+                'Black',
+                'Transparent'
+            ],
+            correcta: 3
+        },
+        {
+            pregunta: '7) What do I love most about you?',
             opciones: [
                 'The way you speak',
-                'Your intelligence',
-                'Everything, because you are perfect for me',
-                'Your patience'
+                'Your smile only',
+                'Your sense of humor',
+                'Your kindness',
+                'Everything, because you are perfect'
             ],
-            correcta: 2
+            correcta: 4
         },
         {
-            pregunta: 'h) Who is my everything and my priority now and in the future?',
-            opciones: ['My work', 'My family', 'My goals', 'My beautiful princess Ana'],
-            correcta: 3
+            pregunta: '8) Why do I love talking to you and calling you every day?',
+            opciones: [
+                'Because I have free time',
+                'Because we have a lot in common',
+                'Because my life without you cannot be happy, and you are my everything',
+                'Because I miss your voice',
+                'Because I like video calls'
+            ],
+            correcta: 2
         }
     ];
 
@@ -908,6 +1038,24 @@ if (is_dir($imgDir)) {
     let puzzleImagenesReto = [];
     let puzzleFotoActual = 0;
     let puzzleMovimientosTotales = 0;
+
+    // Memory Game variables
+    let memoryCards = [];
+    let memoryFlipped = [];
+    let memoryMatched = [];
+    let memoryMoves = 0;
+    let memoryLocked = false;
+    let memoryFirstCard = null;
+    let memorySecondCard = null;
+
+    const memoryPairs = [
+        { emoji: '💌', label: 'Love Letter' },
+        { emoji: '�‍❤️‍👩', label: 'Us Forever' },
+        { emoji: '💕', label: 'Hearts' },
+        { emoji: '👑', label: 'Princess' },
+        { emoji: '⭐', label: 'Star' },
+        { emoji: '🌹', label: 'Rose' }
+    ];
 
     const $ = id => document.getElementById(id);
 
@@ -942,6 +1090,13 @@ if (is_dir($imgDir)) {
         showFinalMsg: false,
         finalMsgStartedAt: 0,
         keys: { left: false, right: false },
+        shieldActive: false,
+        shieldTimer: 0,
+        speedActive: false,
+        speedTimer: 0,
+        doubleJumpActive: false,
+        doubleJumpTimer: 0,
+        extraJumpsLeft: 0,
         player: { x: 40, y: 80, w: 30, h: 44, vx: 0, vy: 0, onGround: false },
         levels: [
             {
@@ -1118,6 +1273,115 @@ if (is_dir($imgDir)) {
                     { x: 2430, y: 138, w: 30, h: 32, minX: 2420, maxX: 2580, speed: 2.55, dir: -1 },
                     { x: 2940, y: 213, w: 30, h: 32, minX: 2920, maxX: 3050, speed: 2.6, dir: 1 }
                 ]
+            },
+            {
+                worldWidth: 3600,
+                spawn: { x: 50, y: 145 },
+                goal: { x: 3480, y: 120, w: 64, h: 160 },
+                platforms: [
+                    { x: 0, y: 280, w: 200, h: 60 },
+                    { x: 260, y: 240, w: 160, h: 100 },
+                    { x: 480, y: 190, w: 150, h: 30 },
+                    { x: 680, y: 145, w: 140, h: 30 },
+                    { x: 870, y: 110, w: 140, h: 30 },
+                    { x: 1060, y: 165, w: 160, h: 165 },
+                    { x: 1280, y: 120, w: 140, h: 30 },
+                    { x: 1470, y: 85, w: 150, h: 30 },
+                    { x: 1680, y: 140, w: 180, h: 180 },
+                    { x: 1930, y: 110, w: 140, h: 30 },
+                    { x: 2120, y: 75, w: 140, h: 30 },
+                    { x: 2330, y: 145, w: 180, h: 185 },
+                    { x: 2580, y: 280, w: 180, h: 60 },
+                    { x: 2800, y: 240, w: 160, h: 100 },
+                    { x: 3020, y: 190, w: 150, h: 30 },
+                    { x: 3220, y: 145, w: 150, h: 30 },
+                    { x: 3420, y: 280, w: 180, h: 60 }
+                ],
+                stars: [
+                    { x: 310, y: 195, taken: false },
+                    { x: 525, y: 150, taken: false },
+                    { x: 750, y: 105, taken: false },
+                    { x: 930, y: 70, taken: false },
+                    { x: 1330, y: 85, taken: false },
+                    { x: 1540, y: 50, taken: false },
+                    { x: 1980, y: 75, taken: false },
+                    { x: 2190, y: 40, taken: false },
+                    { x: 2650, y: 110, taken: false },
+                    { x: 2880, y: 200, taken: false },
+                    { x: 3080, y: 155, taken: false },
+                    { x: 3290, y: 110, taken: false },
+                    { x: 3500, y: 246, taken: false }
+                ],
+                powerups: [
+                    { x: 600, y: 135, type: 'shield', taken: false },
+                    { x: 1200, y: 50, type: 'speed', taken: false },
+                    { x: 2150, y: 50, type: 'shield', taken: false },
+                    { x: 3100, y: 105, type: 'double-jump', taken: false }
+                ],
+                enemies: [
+                    { x: 310, y: 210, w: 30, h: 32, minX: 290, maxX: 460, speed: 2.3, dir: 1, type: 'ground' },
+                    { x: 1140, y: 130, w: 30, h: 32, minX: 1115, maxX: 1270, speed: 2.4, dir: -1, type: 'ground' },
+                    { x: 1880, y: 110, w: 28, h: 28, minX: 1860, maxX: 2020, speed: 2.5, dir: 1, type: 'flying' },
+                    { x: 2530, y: 95, w: 28, h: 28, minX: 2510, maxX: 2670, speed: 2.6, dir: -1, type: 'flying' },
+                    { x: 3150, y: 195, w: 30, h: 32, minX: 3130, maxX: 3280, speed: 2.7, dir: 1, type: 'ground' }
+                ]
+            },
+            {
+                worldWidth: 4000,
+                spawn: { x: 50, y: 150 },
+                goal: { x: 3880, y: 100, w: 70, h: 180 },
+                platforms: [
+                    { x: 0, y: 280, w: 190, h: 60 },
+                    { x: 250, y: 230, w: 150, h: 110 },
+                    { x: 460, y: 175, w: 135, h: 35 },
+                    { x: 650, y: 130, w: 135, h: 35 },
+                    { x: 840, y: 85, w: 130, h: 35 },
+                    { x: 1020, y: 140, w: 150, h: 200 },
+                    { x: 1240, y: 95, w: 130, h: 35 },
+                    { x: 1430, y: 50, w: 140, h: 35 },
+                    { x: 1640, y: 100, w: 170, h: 220 },
+                    { x: 1870, y: 80, w: 130, h: 35 },
+                    { x: 2060, y: 40, w: 130, h: 35 },
+                    { x: 2250, y: 110, w: 170, h: 230 },
+                    { x: 2500, y: 280, w: 170, h: 60 },
+                    { x: 2720, y: 225, w: 150, h: 115 },
+                    { x: 2940, y: 165, w: 135, h: 35 },
+                    { x: 3130, y: 115, w: 135, h: 35 },
+                    { x: 3320, y: 65, w: 140, h: 35 },
+                    { x: 3530, y: 150, w: 170, h: 210 },
+                    { x: 3800, y: 280, w: 200, h: 60 }
+                ],
+                stars: [
+                    { x: 295, y: 190, taken: false },
+                    { x: 510, y: 135, taken: false },
+                    { x: 710, y: 90, taken: false },
+                    { x: 895, y: 45, taken: false },
+                    { x: 1295, y: 60, taken: false },
+                    { x: 1500, y: 10, taken: false },
+                    { x: 1920, y: 45, taken: false },
+                    { x: 2115, y: 5, taken: false },
+                    { x: 2565, y: 60, taken: false },
+                    { x: 2800, y: 180, taken: false },
+                    { x: 3000, y: 130, taken: false },
+                    { x: 3190, y: 75, taken: false },
+                    { x: 3400, y: 115, taken: false },
+                    { x: 3850, y: 246, taken: false }
+                ],
+                powerups: [
+                    { x: 710, y: 80, type: 'shield', taken: false },
+                    { x: 1350, y: 20, type: 'speed', taken: false },
+                    { x: 2100, y: 10, type: 'shield', taken: false },
+                    { x: 3000, y: 130, type: 'double-jump', taken: false },
+                    { x: 3400, y: 30, type: 'speed', taken: false }
+                ],
+                enemies: [
+                    { x: 320, y: 215, w: 30, h: 32, minX: 290, maxX: 480, speed: 2.3, dir: 1, type: 'ground' },
+                    { x: 1130, y: 105, w: 28, h: 28, minX: 1105, maxX: 1290, speed: 2.5, dir: -1, type: 'flying' },
+                    { x: 1880, y: 65, w: 28, h: 28, minX: 1860, maxX: 2050, speed: 2.6, dir: 1, type: 'flying' },
+                    { x: 2570, y: 105, w: 30, h: 32, minX: 2545, maxX: 2740, speed: 2.4, dir: -1, type: 'ground' },
+                    { x: 3240, y: 30, w: 28, h: 28, minX: 3215, maxX: 3410, speed: 2.7, dir: 1, type: 'flying' },
+                    { x: 3780, y: 215, w: 30, h: 32, minX: 3755, maxX: 3950, speed: 2.8, dir: -1, type: 'ground' }
+                ]
             }
         ]
     };
@@ -1160,13 +1424,19 @@ if (is_dir($imgDir)) {
     function loadCurrentLevel() {
         const lvl = levelData();
         lvl.stars.forEach(star => { star.taken = false; });
+        if (lvl.powerups) lvl.powerups.forEach(pu => { pu.taken = false; });
         lvl.enemies.forEach(enemy => {
             enemy.dir = enemy.dir >= 0 ? 1 : -1;
             enemy.alive = true;
+            if (enemy.type === 'flying') enemy.baseY = enemy.y;
         });
         game.levelCompleted = false;
         game.showFinalMsg = false;
         game.finalMsgStartedAt = 0;
+        game.shieldActive = false;
+        game.speedActive = false;
+        game.doubleJumpActive = false;
+        game.extraJumpsLeft = 0;
         $('btn-game-next').disabled = true;
         resetPlayerPosition();
         updateGameHud();
@@ -1212,13 +1482,34 @@ if (is_dir($imgDir)) {
         const player = game.player;
         const prevBottom = player.y + player.h;
 
-        player.vx = 0;
-        if (game.keys.left) player.vx = -3.5;
-        if (game.keys.right) player.vx = 3.5;
+        // Update powerup timers
+        if (game.shieldActive) {
+            game.shieldTimer -= 16;
+            if (game.shieldTimer <= 0) game.shieldActive = false;
+        }
+        if (game.speedActive) {
+            game.speedTimer -= 16;
+            if (game.speedTimer <= 0) game.speedActive = false;
+        }
+        if (game.doubleJumpActive) {
+            game.doubleJumpTimer -= 16;
+            if (game.doubleJumpTimer <= 0) {
+                game.doubleJumpActive = false;
+                game.extraJumpsLeft = 0;
+            }
+        }
 
-        if (game.jumpQueued && player.onGround) {
+        player.vx = 0;
+        const moveSpeed = game.speedActive ? 5.5 : 3.5;
+        if (game.keys.left) player.vx = -moveSpeed;
+        if (game.keys.right) player.vx = moveSpeed;
+
+        if (game.jumpQueued && (player.onGround || (game.doubleJumpActive && game.extraJumpsLeft > 0))) {
             player.vy = game.jumpBoost ? -14.2 : -10.8;
             player.onGround = false;
+            if (game.doubleJumpActive && game.extraJumpsLeft > 0) {
+                game.extraJumpsLeft--;
+            }
             game.jumpBoost = false;
         }
         game.jumpQueued = false;
@@ -1241,6 +1532,7 @@ if (is_dir($imgDir)) {
                 player.y = pl.y - player.h;
                 player.vy = 0;
                 player.onGround = true;
+                if (game.doubleJumpActive) game.extraJumpsLeft = 1;
             } else if (player.vy < 0) {
                 player.y = pl.y + pl.h;
                 player.vy = 0;
@@ -1256,9 +1548,41 @@ if (is_dir($imgDir)) {
             return;
         }
 
+        // Power-ups collection
+        if (lvl.powerups) {
+            lvl.powerups.forEach(pu => {
+                if (pu.taken) return;
+                const hit = intersects(player, { x: pu.x - 12, y: pu.y - 12, w: 24, h: 24 });
+                if (!hit) return;
+                pu.taken = true;
+                if (pu.type === 'shield' && !game.shieldActive) {
+                    game.shieldActive = true;
+                    game.shieldTimer = 12000;
+                    reproducirPowerup();
+                    setGameStatus('Shield activated! You are protected.', '#047857');
+                } else if (pu.type === 'speed' && !game.speedActive) {
+                    game.speedActive = true;
+                    game.speedTimer = 10000;
+                    reproducirPowerup();
+                    setGameStatus('Speed boost! Run faster.', '#047857');
+                } else if (pu.type === 'double-jump' && !game.doubleJumpActive) {
+                    game.doubleJumpActive = true;
+                    game.doubleJumpTimer = 15000;
+                    game.extraJumpsLeft = 1;
+                    reproducirPowerup();
+                    setGameStatus('Double jump unlocked!', '#047857');
+                }
+            });
+        }
+
         let wasDamaged = false;
         lvl.enemies.forEach(enemy => {
             if (!enemy.alive) return;
+
+            if (enemy.type === 'flying') {
+                const time = performance.now() * 0.0015;
+                enemy.y = enemy.baseY + Math.sin(time) * 20;
+            }
 
             enemy.x += enemy.speed * enemy.dir;
             if (enemy.x <= enemy.minX || enemy.x + enemy.w >= enemy.maxX) {
@@ -1272,10 +1596,18 @@ if (is_dir($imgDir)) {
                     player.vy = -8.4;
                     player.y = enemy.y - player.h - 1;
                     setGameStatus('Great jump! You defeated a guardian.', '#047857');
+                    reproducirDerrota();
                     return;
                 }
 
-                wasDamaged = true;
+                if (!game.shieldActive) {
+                    wasDamaged = true;
+                } else {
+                    game.shieldActive = false;
+                    setGameStatus('Shield took the hit! But it is gone.', '#be123c');
+                    reproducirDanio();
+                    return;
+                }
             }
         });
 
@@ -1292,6 +1624,7 @@ if (is_dir($imgDir)) {
             game.stars += 1;
             updateGameHud();
             setGameStatus(`Star collected. Total stars: ${game.stars}.`, '#9f1239');
+            reproducirAcierto();
         });
 
         if (intersects(player, lvl.goal)) {
@@ -1429,6 +1762,25 @@ if (is_dir($imgDir)) {
             gameCtx.fillRect(star.x - 5, star.y - 1, 10, 2);
         });
 
+        if (lvl.powerups) {
+            lvl.powerups.forEach(pu => {
+                if (pu.taken) return;
+                const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.006);
+                gameCtx.save();
+                gameCtx.globalAlpha = pulse;
+                gameCtx.fillStyle = pu.type === 'shield' ? '#10b981' : pu.type === 'speed' ? '#f59e0b' : '#a78bfa';
+                gameCtx.beginPath();
+                gameCtx.arc(pu.x, pu.y, 10, 0, Math.PI * 2);
+                gameCtx.fill();
+                gameCtx.fillStyle = '#fff';
+                gameCtx.font = 'bold 14px Arial';
+                gameCtx.textAlign = 'center';
+                gameCtx.textBaseline = 'middle';
+                gameCtx.fillText(pu.type === 'shield' ? '🛡️' : pu.type === 'speed' ? '⚡' : '✨', pu.x, pu.y);
+                gameCtx.restore();
+            });
+        }
+
         lvl.enemies.forEach(enemy => {
             if (!enemy.alive) return;
             drawEnemySprite(enemy);
@@ -1443,6 +1795,15 @@ if (is_dir($imgDir)) {
 
         const p = game.player;
         drawPrincessSprite(p.x, p.y, p.w, p.h);
+
+        if (game.shieldActive) {
+            const pulse = 0.7 + 0.3 * Math.sin(performance.now() * 0.008);
+            gameCtx.strokeStyle = `rgba(16, 185, 129, ${pulse})`;
+            gameCtx.lineWidth = 2.5;
+            gameCtx.beginPath();
+            gameCtx.arc(p.x + p.w / 2, p.y + p.h / 2, 28, 0, Math.PI * 2);
+            gameCtx.stroke();
+        }
 
         gameCtx.restore();
 
@@ -1509,7 +1870,7 @@ if (is_dir($imgDir)) {
             const bodySize = Math.max(13, Math.round(h * 0.053));
             gameCtx.font = bodySize + 'px Georgia, serif';
             gameCtx.fillStyle = '#9f1239';
-            const FINAL_MSG = 'My love, I worked on this game to cheer you up when you are tired. I love you so much, and you are my everything. \u2764\uFE0F';
+            const FINAL_MSG = 'Congratulations my love, you did it, you are the best and I am so proud of you! \u2764\uFE0F';
             const maxLineW = mw2 * 0.84;
             const lineHeight = bodySize * 1.65;
             let lineY = my + mh2 * 0.44;
@@ -1582,7 +1943,9 @@ if (is_dir($imgDir)) {
     }
 
     function prepararRetoPuzzle() {
-        const candidatas = Array.isArray(IMAGENES_PUZZLE) ? IMAGENES_PUZZLE.slice(0, 2) : [];
+        const todasLasImagenes = Array.isArray(IMAGENES_PUZZLE) ? IMAGENES_PUZZLE : [];
+        const nuevas = todasLasImagenes.filter(img => /\/im\d/i.test(img));
+        const candidatas = nuevas.length >= 2 ? nuevas : todasLasImagenes.slice(0, 2);
         puzzleImagenesReto = candidatas.length > 0 ? candidatas : [''];
         puzzleFotoActual = 0;
         puzzleMovimientosTotales = 0;
@@ -1768,6 +2131,60 @@ if (is_dir($imgDir)) {
             gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
             osc.start(ctx.currentTime);
             osc.stop(ctx.currentTime + 0.28);
+        } catch (_) {}
+    }
+
+    function reproducirPowerup() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const notas = [880, 1100, 1320];
+            notas.forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                const t = ctx.currentTime + i * 0.1;
+                osc.frequency.setValueAtTime(freq, t);
+                gain.gain.setValueAtTime(0.18, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+                osc.start(t);
+                osc.stop(t + 0.4);
+            });
+        } catch (_) {}
+    }
+
+    function reproducirDanio() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(150, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.12, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.2);
+        } catch (_) {}
+    }
+
+    function reproducirDerrota() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(300, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.25);
+            gain.gain.setValueAtTime(0.14, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.25);
         } catch (_) {}
     }
 
@@ -2086,6 +2503,119 @@ if (is_dir($imgDir)) {
         $('carta-amor').classList.remove('visible');
     }
 
+    function iniciarMemoryGame() {
+        memoryCards = [];
+        memoryFlipped = [];
+        memoryMatched = [];
+        memoryMoves = 0;
+        memoryLocked = false;
+        memoryFirstCard = null;
+        memorySecondCard = null;
+
+        const pares = [...memoryPairs, ...memoryPairs];
+        for (let i = pares.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pares[i], pares[j]] = [pares[j], pares[i]];
+        }
+
+        pares.forEach((pair, idx) => {
+            memoryCards.push({
+                id: idx,
+                emoji: pair.emoji,
+                label: pair.label,
+                matched: false
+            });
+        });
+
+        renderMemoryBoard();
+        actualizarMemoryHUD();
+        $('memory-status').textContent = 'Happy Anniversary Baby, 1 year and 10 months until the eternity 💕';
+    }
+
+    function renderMemoryBoard() {
+        const board = $('memory-board');
+        board.innerHTML = '';
+
+        memoryCards.forEach((card, idx) => {
+            const cardEl = document.createElement('button');
+            cardEl.className = 'memory-card';
+            cardEl.type = 'button';
+
+            if (memoryMatched.includes(idx)) cardEl.classList.add('matched');
+            if (memoryFlipped.includes(idx)) cardEl.classList.add('flipped');
+
+            const inner = document.createElement('div');
+            inner.className = 'memory-card-inner';
+            inner.textContent = (memoryFlipped.includes(idx) || memoryMatched.includes(idx)) ? card.emoji : '?';
+
+            cardEl.appendChild(inner);
+            cardEl.addEventListener('click', () => flipMemoryCard(idx));
+            board.appendChild(cardEl);
+        });
+    }
+
+    function flipMemoryCard(idx) {
+        if (memoryLocked || memoryMatched.includes(idx) || memoryFlipped.includes(idx)) return;
+
+        memoryFlipped.push(idx);
+        renderMemoryBoard();
+        reproducirAcierto();
+
+        if (memoryFirstCard === null) {
+            memoryFirstCard = idx;
+            return;
+        }
+
+        memorySecondCard = idx;
+        memoryLocked = true;
+        memoryMoves++;
+        actualizarMemoryHUD();
+
+        const card1 = memoryCards[memoryFirstCard];
+        const card2 = memoryCards[memorySecondCard];
+
+        if (card1.emoji === card2.emoji) {
+            setTimeout(() => {
+                memoryMatched.push(memoryFirstCard, memorySecondCard);
+                memoryFlipped = memoryFlipped.filter(i => !memoryMatched.includes(i));
+                memoryFirstCard = null;
+                memorySecondCard = null;
+                memoryLocked = false;
+                renderMemoryBoard();
+                reproducirPowerup();
+
+                if (memoryMatched.length === memoryCards.length) {
+                    $('memory-status').textContent = 'I love you so much my beautiful Princess 💕';
+                    lanzarConfetti();
+                    reproducirAcierto();
+                }
+            }, 600);
+        } else {
+            setTimeout(() => {
+                memoryFlipped = memoryFlipped.filter(i => i !== memoryFirstCard && i !== memorySecondCard);
+                memoryFirstCard = null;
+                memorySecondCard = null;
+                memoryLocked = false;
+                renderMemoryBoard();
+                reproducirError();
+            }, 900);
+        }
+    }
+
+    function actualizarMemoryHUD() {
+        $('memory-matches').textContent = Math.floor(memoryMatched.length / 2);
+        $('memory-total').textContent = memoryPairs.length;
+        $('memory-moves').textContent = memoryMoves;
+        const maxMoves = memoryPairs.length * 2.5;
+        const score = Math.max(0, Math.round(100 - (memoryMoves / maxMoves) * 100));
+        $('memory-score').textContent = score;
+    }
+
+    function reiniciarMemoryGame() {
+        iniciarMemoryGame();
+        $('memory-status').textContent = 'Game restarted!';
+    }
+
     window.addEventListener('keydown', event => {
         const key = event.key.toLowerCase();
         if (key === 'arrowleft' || key === 'a') game.keys.left = true;
@@ -2178,6 +2708,8 @@ if (is_dir($imgDir)) {
     }
 
     $('btn-mezclar').addEventListener('click', reiniciarPuzzleActual);
+    $('btn-memory-start').addEventListener('click', iniciarMemoryGame);
+    $('btn-memory-restart').addEventListener('click', reiniciarMemoryGame);
     updateAudioButton();
     </script>
 </body>
