@@ -178,21 +178,19 @@ if ($totalEnviado !== $totalEsperado || ($score / $totalEsperado) < $porcentajeM
 }
 
 $mensajeAmor = <<<'TEXT'
-Wipawee, my love,
+My love, My sweet Wipawee,
 
-I’ve been thinking a lot today about how it’s already been 1 year and 9 months since we started this. 21 months might just be a number to some, but to me, it represents the best chapter of my life so far. I mean it from the bottom of my heart: you are truly the best thing that has ever happened to me.
+Today marks one year and ten months since we started this journey together, and I've been thinking about how incredible it is that, despite the thousands of miles between us, I feel you closer to me than anyone else.
 
-I can’t even describe how much I look forward to the day I don’t have to say goodbye through a screen. Every day, that feeling of wanting to just be there with you grows more and more. I want to be by your side for real, for good, and just love you forever and marry you and make you mine all forever.
+It's not just about the time; it's about these 22 pages of a story that completely changed my life. You truly are my everything. I can't imagine waking up and you not being there, or letting a single day pass without hearing your voice or reading a message from you. Talking to you is what gives my daily routine meaning; it's my sanctuary where everything feels right, no matter what's happening in the world outside.
 
-I miss your smile so much—it’s the one thing that can always turn my day around. And your eyes... I could honestly look at them for hours and fall in love with you more and more. To me, they are the most beautiful eyes in the world.
+You are the sweetest person I've ever known. You have this tenderness that shines right through the screen and manages to make me smile even on my hardest days. I know that me being here in Chile and you being in Thailand isn't the easiest thing in the world, but you make every single effort worth it. You make me a better person, you make me immensely happy, and honestly, I don't even know what my world would look like if you weren't there to light it up.
 
-My biggest dream right now is just the simple stuff: waking up next to you every single morning, seeing you there, and finally giving you those million hugs I’ve been saving up. I just want to hold you and never let go.
+Thank you for choosing me every day, for being my partner, and for making these last twenty-two months feel like just the beginning of forever. I love you with everything I am, and I'm counting down the days until the distance is nothing more than a memory.
 
-Thank you for being mine and for these amazing 21 months. I love you more than I can put into words.
+Happy 22 months, my life
 
-Happy anniversary, my princess.
-
-Always yours, Natha
+Natha.
 TEXT;
 
 $mensajeSeguro = nl2br(htmlspecialchars($mensajeAmor, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
