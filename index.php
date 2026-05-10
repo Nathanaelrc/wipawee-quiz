@@ -678,6 +678,33 @@ if (is_dir($imgDir)) {
             justify-content: center;
         }
 
+        /* ===== CATCH MY LOVE GAME ===== */
+        .catcher-canvas {
+            display: block;
+            width: 100%;
+            max-width: 960px;
+            height: auto;
+            border-radius: 14px;
+            border: 2px solid rgba(244,63,94,0.28);
+            box-shadow: 0 6px 28px rgba(244,63,94,0.13);
+        }
+        .catcher-love-shell {
+            height: 14px;
+            background: rgba(244,63,94,0.10);
+            border-radius: 9px;
+            overflow: hidden;
+            border: 1px solid rgba(244,63,94,0.20);
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .catcher-love-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 9px;
+            background: linear-gradient(90deg, #f43f5e, #ec4899, #f59e0b);
+            transition: width 0.3s ease;
+        }
+
         @media (max-width: 480px) {
             body {
                 padding-top: 0.45rem !important;
@@ -721,6 +748,9 @@ if (is_dir($imgDir)) {
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="tab-memory-btn" data-bs-toggle="tab" data-bs-target="#tab-memory" type="button" role="tab" aria-controls="tab-memory" aria-selected="false">Memory Game 💞</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-catcher-btn" data-bs-toggle="tab" data-bs-target="#tab-catcher" type="button" role="tab" aria-controls="tab-catcher" aria-selected="false">Catch My Love &#x1F48C;</button>
                 </li>
             </ul>
         </div>
@@ -923,6 +953,46 @@ if (is_dir($imgDir)) {
                     <p id="memory-status" class="text-center fw-semibold mt-4 mb-0" style="color:#9f1239;min-height:24px;"></p>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="tab-catcher" role="tabpanel" aria-labelledby="tab-catcher-btn" tabindex="0">
+                <div class="card-romantic princess-game-card">
+                    <div class="text-center mb-3">
+                        <div style="font-size:2.2rem;line-height:1;">&#x1F30D;</div>
+                        <h2 class="font-title fw-bold mb-1" style="font-size:clamp(1.5rem,4vw,2rem);color:#a5164d;">Catch My Love</h2>
+                        <p class="text-secondary mb-1">Catch everything I send you from across the world &#x1F495;</p>
+                        <small class="text-secondary" style="font-size:.83rem;">Words from my letter fly to you &mdash; catch them all! &#x1F48C;</small>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 justify-content-center mb-2">
+                        <span class="game-chip">Lives: <span id="catcher-lives">&#x2764;&#xFE0F;&#x2764;&#xFE0F;&#x2764;&#xFE0F;</span></span>
+                        <span class="game-chip">Love meter: <span id="catcher-love">0</span>%</span>
+                    </div>
+
+                    <div class="catcher-love-shell mb-3">
+                        <div id="catcher-love-bar" class="catcher-love-fill"></div>
+                    </div>
+
+                    <canvas id="catcher-canvas" class="catcher-canvas" width="960" height="380" aria-label="Catch My Love game"></canvas>
+
+                    <p id="catcher-status" class="text-center fw-semibold mt-3 mb-3" style="color:#9f1239;min-height:24px;">Press Start to receive my love from Chile! &#x1F48C;</p>
+
+                    <div class="d-flex justify-content-center flex-wrap gap-2 mb-2">
+                        <button id="btn-catcher-start" class="btn btn-love" type="button">Start Catching &#x1F48C;</button>
+                        <button id="btn-catcher-restart" class="btn btn-gold" type="button">Restart</button>
+                    </div>
+
+                    <div class="game-touch-controls" aria-label="Touch controls for mobile">
+                        <div class="touch-pad-left">
+                            <button id="btn-catcher-left" class="game-touch-btn" type="button">&#x2190;</button>
+                            <button id="btn-catcher-right" class="game-touch-btn" type="button">&#x2192;</button>
+                        </div>
+                        <div class="touch-pad-right"></div>
+                    </div>
+
+                    <p class="text-center text-secondary mb-0" style="font-size:.9rem;">Controls: <strong>&#x2190; / &#x2192;</strong> or <strong>A / D</strong> &mdash; catch &#x1F48C; &#x1F339; &#x1F495; &#x2B50; and avoid &#x1F494; broken hearts!</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -2710,6 +2780,226 @@ if (is_dir($imgDir)) {
     $('btn-mezclar').addEventListener('click', reiniciarPuzzleActual);
     $('btn-memory-start').addEventListener('click', iniciarMemoryGame);
     $('btn-memory-restart').addEventListener('click', reiniciarMemoryGame);
+
+    // =====================================================
+    // CATCH MY LOVE – 4th Mini-game
+    // Catch the love items sent from Chile, avoid broken hearts
+    // =====================================================
+    (function() {
+        const cv  = $('catcher-canvas');
+        const ctx = cv ? cv.getContext('2d') : null;
+
+        const QUOTES = [
+            `"Talking to you is what gives my daily routine meaning; it's my sanctuary where everything feels right."`,
+            `"You are the sweetest person I've ever known — your tenderness makes me smile even on my hardest days."`,
+            `"You make every single effort worth it. You make me immensely happy."`,
+            `"I'm counting down the days until the distance is nothing more than a memory."`,
+            `"Thank you for choosing me every day, for being my partner and the love of my life."`,
+        ];
+
+        const ITEMS = [
+            { emoji: '💌', val: 5, bad: false },
+            { emoji: '🌹', val: 3, bad: false },
+            { emoji: '💕', val: 4, bad: false },
+            { emoji: '⭐', val: 2, bad: false },
+            { emoji: '💔', val: 0, bad: true  },
+        ];
+
+        const cg = {
+            running: false, loopStarted: false,
+            lives: 3, love: 0,
+            px: 0, pw: 76, ph: 50,
+            keys: { left: false, right: false },
+            items: [], stimer: 0,
+            won: false, lost: false, wonAt: 0, wonQ: '',
+        };
+
+        function livesStr(n) {
+            return '❤️'.repeat(Math.max(0, n)) + '🖤'.repeat(Math.max(0, 3 - n));
+        }
+        function hud() {
+            const le = $('catcher-lives'); if (le) le.textContent = livesStr(cg.lives);
+            const lv = $('catcher-love');  if (lv) lv.textContent  = cg.love;
+            const b  = $('catcher-love-bar'); if (b) b.style.width = cg.love + '%';
+        }
+        function spawnInterval() { return Math.max(40, 90 - Math.floor(cg.love / 25) * 12); }
+        function itemSpeed()     { return 2.5 + Math.floor(cg.love / 25) * 0.55; }
+        function badChance()     { return cg.love < 25 ? 0.13 : cg.love < 50 ? 0.18 : cg.love < 75 ? 0.22 : 0.27; }
+
+        function spawnItem() {
+            const cw = cv.width;
+            const bad = Math.random() < badChance();
+            const def = bad ? ITEMS[4] : ITEMS[Math.floor(Math.random() * 4)];
+            return { ...def, x: 35 + Math.random() * (cw - 70), y: -35,
+                speed: itemSpeed() + Math.random() * 1.3,
+                size: 22 + Math.random() * 9,
+                wobble: Math.random() * Math.PI * 2 };
+        }
+
+        function resetGame() {
+            cg.lives = 3; cg.love = 0; cg.items = []; cg.stimer = 0;
+            cg.won = false; cg.lost = false; cg.wonAt = 0; cg.wonQ = '';
+            cg.px = cv ? cv.width / 2 - cg.pw / 2 : 100;
+            hud();
+        }
+
+        function updateGame() {
+            if (!cg.running || !cv) return;
+            const cw = cv.width, ch = cv.height, ms = 5.5;
+            if (cg.keys.left)  cg.px = Math.max(0, cg.px - ms);
+            if (cg.keys.right) cg.px = Math.min(cw - cg.pw, cg.px + ms);
+            cg.stimer++;
+            if (cg.stimer >= spawnInterval()) { cg.stimer = 0; cg.items.push(spawnItem()); }
+            const pY = ch - cg.ph - 12;
+            cg.items = cg.items.filter(item => {
+                item.y += item.speed;
+                item.wobble += 0.044;
+                item.x += Math.sin(item.wobble) * 0.65;
+                item.x = Math.max(item.size, Math.min(cw - item.size, item.x));
+                const ix = item.x > cg.px - item.size * 0.6 && item.x < cg.px + cg.pw + item.size * 0.6;
+                const iy = item.y + item.size > pY && item.y - item.size < pY + cg.ph;
+                if (ix && iy) {
+                    if (item.bad) {
+                        cg.lives = Math.max(0, cg.lives - 1);
+                        reproducirDanio(); hud();
+                        if (cg.lives <= 0) { cg.running = false; cg.lost = true; }
+                    } else {
+                        cg.love = Math.min(100, cg.love + item.val);
+                        reproducirAcierto(); hud();
+                        if (cg.love >= 100) {
+                            cg.running = false; cg.won = true;
+                            cg.wonAt = performance.now();
+                            cg.wonQ = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+                            lanzarConfetti();
+                        }
+                    }
+                    return false;
+                }
+                return item.y < ch + 45;
+            });
+        }
+
+        function drawBg(cw, ch) {
+            const g = ctx.createLinearGradient(0, 0, 0, ch);
+            g.addColorStop(0, '#fff5fb'); g.addColorStop(0.65, '#ffe0ef'); g.addColorStop(1, '#ffd0e6');
+            ctx.fillStyle = g; ctx.fillRect(0, 0, cw, ch);
+            const t = performance.now() * 0.0007;
+            ctx.globalAlpha = 0.07; ctx.font = '26px serif';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            [[cw*.08, ch*.2, 0], [cw*.88, ch*.13, 1.1], [cw*.5, ch*.28, 0.5],
+             [cw*.22, ch*.73, 1.8], [cw*.78, ch*.68, 2.3]].forEach(([x, y, p]) => {
+                ctx.fillText('💕', x, y + Math.sin(t + p) * 7);
+            });
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#f9a8d4'; ctx.fillRect(0, ch - 12, cw, 12);
+        }
+
+        function drawPlayer(x, y) {
+            const w = cg.pw, h = cg.ph, cx2 = x + w / 2;
+            const g2 = ctx.createLinearGradient(x, y + 16, x, y + h);
+            g2.addColorStop(0, '#fda4c8'); g2.addColorStop(1, '#f472b6');
+            ctx.fillStyle = g2; ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(x + 4, y + 16, w - 8, h - 16, [0, 0, 10, 10]);
+            else ctx.rect(x + 4, y + 16, w - 8, h - 16);
+            ctx.fill();
+            ctx.strokeStyle = '#be185d'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(x - 14, y + 16); ctx.lineTo(x + w + 14, y + 16); ctx.stroke();
+            ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(cx2, y + 9, 22, Math.PI, 0); ctx.stroke();
+            ctx.font = '18px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText('💕', cx2, y + h - 10);
+        }
+
+        function drawWinOverlay(cw, ch) {
+            const t    = Math.min(1, (performance.now() - cg.wonAt) / 550);
+            const ease = 1 - Math.pow(1 - t, 3);
+            const mx = cw * .05, my = ch * .07, mw = cw * .9, mh = ch * .86;
+            ctx.save(); ctx.globalAlpha = ease;
+            const gw = ctx.createLinearGradient(mx, my, mx, my + mh);
+            gw.addColorStop(0, 'rgba(255,241,251,0.97)');
+            gw.addColorStop(1, 'rgba(255,225,240,0.96)');
+            ctx.fillStyle = gw; ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(mx, my, mw, mh, 20); else ctx.rect(mx, my, mw, mh);
+            ctx.fill(); ctx.strokeStyle = 'rgba(244,63,94,0.38)'; ctx.lineWidth = 2; ctx.stroke();
+            ctx.fillStyle = '#a5164d';
+            ctx.font = `bold ${Math.max(14, Math.round(ch * .088))}px Georgia,serif`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText('💌 You caught all my love! 💕', cw / 2, my + mh * .23);
+            ctx.fillStyle = '#9f1239';
+            const fs = Math.max(11, Math.round(ch * .051));
+            ctx.font = `italic ${fs}px Georgia,serif`;
+            const words = cg.wonQ.split(' '), maxW = mw * .8, lh = fs * 1.75;
+            let ly = my + mh * .51, ln = '';
+            words.forEach(w => {
+                const test = ln ? ln + ' ' + w : w;
+                if (ctx.measureText(test).width > maxW && ln) { ctx.fillText(ln, cw / 2, ly); ln = w; ly += lh; }
+                else ln = test;
+            });
+            if (ln) ctx.fillText(ln, cw / 2, ly);
+            ctx.restore(); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        }
+
+        function drawLoseOverlay(cw, ch) {
+            ctx.fillStyle = 'rgba(40,15,30,0.52)'; ctx.fillRect(0, 0, cw, ch);
+            ctx.fillStyle = '#fff';
+            ctx.font = `bold ${Math.max(14, Math.round(ch * .088))}px Georgia,serif`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText("🥺 Don't give up, my love!", cw / 2, ch * .43);
+            const fs2 = Math.max(11, Math.round(ch * .053));
+            ctx.font = `${fs2}px Georgia,serif`;
+            ctx.fillText('Press Restart and try again 💕', cw / 2, ch * .58);
+            ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        }
+
+        function drawGame() {
+            if (!cv || !ctx) return;
+            const cw = cv.width, ch = cv.height;
+            ctx.clearRect(0, 0, cw, ch);
+            drawBg(cw, ch);
+            cg.items.forEach(item => {
+                ctx.save();
+                ctx.font = `${Math.round(item.size * 1.9)}px serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(244,63,94,0.22)'; ctx.shadowBlur = 7;
+                ctx.fillText(item.emoji, item.x, item.y);
+                ctx.restore();
+            });
+            drawPlayer(cg.px, ch - cg.ph - 12);
+            if (cg.won)  drawWinOverlay(cw, ch);
+            if (cg.lost) drawLoseOverlay(cw, ch);
+            ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        }
+
+        function gameLoop() { updateGame(); drawGame(); requestAnimationFrame(gameLoop); }
+
+        window.startCatcherGame = function() {
+            if (!cv) return;
+            resetGame(); cg.running = true;
+            const el = $('catcher-status');
+            if (el) el.textContent = 'Catch the love I send from Chile! 💌';
+            if (!cg.loopStarted) { cg.loopStarted = true; requestAnimationFrame(gameLoop); }
+        };
+
+        window._catcherKeys = cg.keys;
+
+        window.addEventListener('keydown', e => {
+            if (!cg.running) return;
+            if (e.key === 'ArrowLeft'  || e.key.toLowerCase() === 'a') { cg.keys.left  = true; e.preventDefault(); }
+            if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') { cg.keys.right = true; e.preventDefault(); }
+        });
+        window.addEventListener('keyup', e => {
+            if (e.key === 'ArrowLeft'  || e.key.toLowerCase() === 'a') cg.keys.left  = false;
+            if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') cg.keys.right = false;
+        });
+
+        if (cv) { resetGame(); drawGame(); }
+    })();
+
+    $('btn-catcher-start').addEventListener('click', window.startCatcherGame);
+    $('btn-catcher-restart').addEventListener('click', window.startCatcherGame);
+    bindTouchControl('btn-catcher-left',  () => { window._catcherKeys.left  = true; }, () => { window._catcherKeys.left  = false; });
+    bindTouchControl('btn-catcher-right', () => { window._catcherKeys.right = true; }, () => { window._catcherKeys.right = false; });
+
     updateAudioButton();
     </script>
 </body>
