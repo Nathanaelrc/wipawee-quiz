@@ -455,6 +455,42 @@ if (is_dir($imgDir)) {
             transform: translateY(-1px);
         }
 
+        /* ===== TAB NAV ARROWS ===== */
+        .tab-nav-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin-bottom: 0.75rem;
+        }
+        .tab-arrow {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #be185d;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 16px rgba(45,10,78,0.12), inset 0 1px 0 rgba(255,255,255,0.85);
+            transition: transform 0.22s cubic-bezier(.21,.81,.35,1), box-shadow 0.22s ease, background 0.22s ease, color 0.18s ease;
+            cursor: pointer;
+        }
+        .tab-arrow:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #be185d, #ec4899);
+            transform: scale(1.13);
+            box-shadow: 0 8px 22px rgba(190,24,93,0.38);
+        }
+        .tab-arrow:active { transform: scale(0.94); }
+        .tab-arrow:disabled { opacity: 0.28; pointer-events: none; }
+        .tab-shell-inner { flex: 1; }
+
         .tab-shell {
             border-radius: 1.15rem;
             background: rgba(255, 255, 255, 0.65);
@@ -464,8 +500,6 @@ if (is_dir($imgDir)) {
             -webkit-backdrop-filter: blur(20px) saturate(170%);
             box-shadow: 0 4px 24px rgba(45,10,78,0.09), inset 0 1px 0 rgba(255,255,255,0.82);
         }
-
-        .tab-love .nav-link {
             border: none;
             color: #9f1239;
             font-weight: 700;
@@ -923,7 +957,10 @@ if (is_dir($imgDir)) {
     </div>
 
     <div class="container" style="max-width: 980px; position: relative; z-index: 2;">
-        <div class="tab-shell mb-3">
+        <div class="tab-nav-wrap mb-3">
+            <button id="btn-tab-prev" class="tab-arrow" type="button" aria-label="Previous tab" disabled>&#x2190;</button>
+            <div class="tab-shell-inner">
+            <div class="tab-shell">
             <ul class="nav nav-pills tab-love gap-2 justify-content-center" id="loveTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="tab-quiz-btn" data-bs-toggle="tab" data-bs-target="#tab-quiz" type="button" role="tab" aria-controls="tab-quiz" aria-selected="true">Love Quiz + Puzzle</button>
@@ -938,6 +975,9 @@ if (is_dir($imgDir)) {
                     <button class="nav-link" id="tab-catcher-btn" data-bs-toggle="tab" data-bs-target="#tab-catcher" type="button" role="tab" aria-controls="tab-catcher" aria-selected="false">Catch My Love &#x1F48C;</button>
                 </li>
             </ul>
+        </div>
+            </div>
+            <button id="btn-tab-next" class="tab-arrow" type="button" aria-label="Next tab">&#x2192;</button>
         </div>
 
         <div class="tab-content">
@@ -3184,6 +3224,32 @@ if (is_dir($imgDir)) {
     $('btn-catcher-restart').addEventListener('click', window.startCatcherGame);
     bindTouchControl('btn-catcher-left',  () => { window._catcherKeys.left  = true; }, () => { window._catcherKeys.left  = false; });
     bindTouchControl('btn-catcher-right', () => { window._catcherKeys.right = true; }, () => { window._catcherKeys.right = false; });
+
+    // ===== TAB NAVIGATION ARROWS =====
+    (function() {
+        const tabBtns = Array.from(document.querySelectorAll('#loveTabs .nav-link'));
+        const btnPrev = $('btn-tab-prev');
+        const btnNext = $('btn-tab-next');
+
+        function currentIndex() {
+            return tabBtns.findIndex(b => b.classList.contains('active'));
+        }
+        function updateArrows(idx) {
+            btnPrev.disabled = idx <= 0;
+            btnNext.disabled = idx >= tabBtns.length - 1;
+        }
+        function navigateTo(idx) {
+            if (idx < 0 || idx >= tabBtns.length) return;
+            bootstrap.Tab.getOrCreateInstance(tabBtns[idx]).show();
+            updateArrows(idx);
+        }
+        btnPrev.addEventListener('click', () => navigateTo(currentIndex() - 1));
+        btnNext.addEventListener('click', () => navigateTo(currentIndex() + 1));
+        tabBtns.forEach((btn, idx) => {
+            btn.addEventListener('shown.bs.tab', () => updateArrows(idx));
+        });
+        updateArrows(currentIndex());
+    })();
 
     updateAudioButton();
     </script>
