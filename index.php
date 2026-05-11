@@ -231,6 +231,17 @@ if (is_dir($imgDir)) {
             animation: cardGlowPulse 6s ease-in-out infinite;
         }
 
+        .card-romantic::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 42%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, transparent 100%);
+            border-radius: 1.25rem 1.25rem 0 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .card-romantic::after {
             content: '';
             position: absolute;
@@ -257,8 +268,10 @@ if (is_dir($imgDir)) {
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(22px); }
-            to { opacity: 1; transform: translateY(0); }
+            0%   { opacity: 0; transform: translateY(30px) scale(0.94); }
+            55%  { opacity: 1; transform: translateY(-5px) scale(1.015); }
+            78%  { transform: translateY(2px) scale(0.997); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @keyframes slideIn {
@@ -309,34 +322,108 @@ if (is_dir($imgDir)) {
             100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.45); }
         }
 
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15%  { transform: scale(1.22); filter: drop-shadow(0 0 7px rgba(236,72,153,0.60)); }
+            30%  { transform: scale(1.05); }
+            46%  { transform: scale(1.14); filter: drop-shadow(0 0 4px rgba(236,72,153,0.38)); }
+            62%  { transform: scale(1); filter: none; }
+        }
+
+        @keyframes popIn {
+            0%   { opacity: 0; transform: scale(0.70) rotate(-4deg); }
+            60%  { opacity: 1; transform: scale(1.08) rotate(1.5deg); }
+            80%  { transform: scale(0.96) rotate(-0.5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes floatBounce {
+            0%, 100% { transform: translateY(0); }
+            42%  { transform: translateY(-14px); }
+            64%  { transform: translateY(-7px); }
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position:  200% center; }
+        }
+
+        @keyframes glimmer {
+            0%, 100% { opacity: 0.11; transform: scale(0.84) rotate(0deg); }
+            50%  { opacity: 0.44; transform: scale(1.24) rotate(22deg); }
+        }
+
+        @keyframes sparkleIn {
+            0%   { opacity: 0; transform: scale(0) rotate(-15deg); }
+            70%  { opacity: 1; transform: scale(1.15) rotate(5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        /* Custom enchanted scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(196,130,255,0.08); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ec4899, #a78bfa); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #be185d, #7c3aed); }
+
+        /* Floating / heartbeat utility classes */
+        .icon-float { animation: floatBounce 3.4s ease-in-out infinite; display: inline-block; }
+        .icon-heartbeat { animation: heartBeat 1.9s ease-in-out infinite; display: inline-block; }
+
         .btn-love {
             color: #fff;
             border: none;
             border-radius: 999px;
-            padding: 0.85rem 1.9rem;
-            font-weight: 700;
-            /* Aurora's pink dress gradient */
-            background: linear-gradient(135deg, #be185d, #ec4899, #f9a8d4);
-            box-shadow: 0 12px 28px rgba(190, 24, 93, 0.35), inset 0 1px 0 rgba(255,255,255,0.25);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            text-shadow: 0 1px 3px rgba(100,0,50,0.25);
+            padding: 0.9rem 2.1rem;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 0.01em;
+            background: linear-gradient(135deg, #be185d 0%, #ec4899 55%, #c084fc 100%);
+            background-size: 200% 100%;
+            box-shadow: 0 12px 30px rgba(190,24,93,0.38), inset 0 1px 0 rgba(255,255,255,0.28);
+            transition: transform 0.22s cubic-bezier(.21,.81,.35,1), box-shadow 0.22s ease, background-position 0.45s ease;
+            text-shadow: 0 1px 4px rgba(100,0,50,0.22);
+            position: relative;
+            overflow: hidden;
         }
-
-        .btn-love:hover {
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 18px 36px rgba(190, 24, 93, 0.42), inset 0 1px 0 rgba(255,255,255,0.30);
+        .btn-love::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -80%;
+            width: 58%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.30), transparent);
+            transition: left 0.48s ease;
+            pointer-events: none;
         }
+        .btn-love:hover { color: #fff; transform: translateY(-3px) scale(1.035); background-position: 100% 0; box-shadow: 0 20px 44px rgba(190,24,93,0.46), inset 0 1px 0 rgba(255,255,255,0.34); }
+        .btn-love:hover::before { left: 130%; }
+        .btn-love:active { transform: translateY(-1px) scale(0.98); }
 
         .btn-gold {
             color: #fff;
             border: none;
             border-radius: 999px;
-            padding: 0.8rem 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-            box-shadow: 0 10px 24px rgba(245, 158, 11, 0.35);
+            padding: 0.85rem 1.8rem;
+            font-weight: 800;
+            font-size: 0.97rem;
+            background: linear-gradient(135deg, #b45309 0%, #f59e0b 50%, #fde68a 100%);
+            background-size: 200% 100%;
+            box-shadow: 0 10px 28px rgba(180,83,9,0.38), inset 0 1px 0 rgba(255,255,255,0.28);
+            transition: transform 0.22s cubic-bezier(.21,.81,.35,1), box-shadow 0.22s ease, background-position 0.45s ease;
+            position: relative;
+            overflow: hidden;
         }
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -80%;
+            width: 58%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.32), transparent);
+            transition: left 0.48s ease;
+            pointer-events: none;
+        }
+        .btn-gold:hover { color: #fff; transform: translateY(-3px) scale(1.035); background-position: 100% 0; box-shadow: 0 16px 36px rgba(180,83,9,0.45), inset 0 1px 0 rgba(255,255,255,0.32); }
+        .btn-gold:hover::before { left: 130%; }
+        .btn-gold:active { transform: translateY(-1px) scale(0.98); }
 
         .btn-love,
         .btn-gold {
@@ -348,30 +435,34 @@ if (is_dir($imgDir)) {
             top: 16px;
             right: 16px;
             z-index: 30;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            color: #a5164d;
+            border: 1px solid rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.80);
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+            color: #be185d;
             border-radius: 999px;
             font-weight: 700;
-            font-size: 0.85rem;
-            padding: 0.55rem 0.95rem;
-            box-shadow: 0 10px 20px rgba(66, 25, 52, 0.14);
+            font-size: 0.84rem;
+            padding: 0.56rem 1.05rem;
+            box-shadow: 0 8px 24px rgba(45,10,78,0.14), inset 0 1px 0 rgba(255,255,255,0.82);
+            transition: all 0.22s cubic-bezier(.21,.81,.35,1);
         }
 
         .audio-toggle:hover {
             color: #fff;
-            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            background: linear-gradient(135deg, #be185d, #ec4899);
+            box-shadow: 0 12px 28px rgba(190,24,93,0.34);
+            transform: translateY(-1px);
         }
 
         .tab-shell {
-            border-radius: 1rem;
-            background: rgba(255, 255, 255, 0.56);
-            padding: 0.35rem;
-            border: 1px solid rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            border-radius: 1.15rem;
+            background: rgba(255, 255, 255, 0.65);
+            padding: 0.4rem;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(170%);
+            -webkit-backdrop-filter: blur(20px) saturate(170%);
+            box-shadow: 0 4px 24px rgba(45,10,78,0.09), inset 0 1px 0 rgba(255,255,255,0.82);
         }
 
         .tab-love .nav-link {
@@ -379,13 +470,20 @@ if (is_dir($imgDir)) {
             color: #9f1239;
             font-weight: 700;
             border-radius: 999px;
-            padding: 0.62rem 1rem;
+            padding: 0.62rem 1.1rem;
+            transition: color 0.2s ease, background 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
+        }
+
+        .tab-love .nav-link:not(.active):hover {
+            color: #be185d;
+            background: rgba(236, 72, 153, 0.10);
+            transform: translateY(-1px);
         }
 
         .tab-love .nav-link.active {
             color: #fff;
-            background: linear-gradient(135deg, #be185d, #ec4899, #a78bfa);
-            box-shadow: 0 10px 24px rgba(190, 24, 93, 0.32), 0 2px 8px rgba(167, 139, 250, 0.22);
+            background: linear-gradient(135deg, #be185d 0%, #ec4899 55%, #a78bfa 100%);
+            box-shadow: 0 10px 26px rgba(190,24,93,0.34), 0 2px 10px rgba(167,139,250,0.26), inset 0 1px 0 rgba(255,255,255,0.24);
         }
 
         .quiz-pane-wrap {
@@ -409,12 +507,14 @@ if (is_dir($imgDir)) {
 
         .game-chip {
             border-radius: 999px;
-            padding: 0.35rem 0.7rem;
+            padding: 0.38rem 0.82rem;
             font-size: 0.82rem;
             font-weight: 700;
             color: #831843;
-            background: rgba(244, 63, 94, 0.13);
-            border: 1px solid rgba(244, 63, 94, 0.2);
+            background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(167,139,250,0.10));
+            border: 1px solid rgba(236, 72, 153, 0.22);
+            box-shadow: 0 2px 8px rgba(190,24,93,0.07);
+            transition: transform 0.15s ease;
         }
 
         .game-touch-controls {
@@ -458,28 +558,35 @@ if (is_dir($imgDir)) {
         }
 
         .progress-shell {
-            background: rgba(244, 63, 94, 0.1);
+            background: rgba(236, 72, 153, 0.10);
             border-radius: 999px;
             overflow: hidden;
-            height: 8px;
+            height: 10px;
+            border: 1px solid rgba(236, 72, 153, 0.16);
+            box-shadow: inset 0 1px 3px rgba(45,10,78,0.07);
         }
 
         .progress-love {
             height: 100%;
             width: 0;
-            background: linear-gradient(90deg, #f43f5e, #fb7185, #f59e0b);
+            background: linear-gradient(90deg, #be185d, #ec4899, #a78bfa, #60a5fa);
+            background-size: 200% 100%;
+            animation: shimmer 2.2s linear infinite;
             transition: width 0.5s cubic-bezier(.21,.81,.35,1);
+            border-radius: 999px;
         }
 
         .btn-respuesta {
             width: 100%;
-            border-radius: 0.85rem;
-            border: 1px solid rgba(244, 63, 94, 0.22);
-            padding: 0.82rem 1rem;
+            border-radius: 1.1rem;
+            border: 1.5px solid rgba(236, 72, 153, 0.18);
+            padding: 0.88rem 1.1rem;
             text-align: left;
-            background: rgba(255, 255, 255, 0.74);
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.80);
+            transition: all 0.22s cubic-bezier(.21,.81,.35,1);
+            font-size: 0.96rem;
+            font-weight: 600;
+            color: #2d0a4e;
             position: relative;
             overflow: hidden;
         }
@@ -488,16 +595,17 @@ if (is_dir($imgDir)) {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.52) 50%, transparent 100%);
             transform: translateX(-140%);
-            transition: transform 0.48s ease;
+            transition: transform 0.50s ease;
             pointer-events: none;
         }
 
         .btn-respuesta:hover:not(:disabled) {
-            transform: translateY(-1px);
-            border-color: var(--rose-1);
-            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.14);
+            transform: translateY(-2px) scale(1.006);
+            border-color: rgba(236, 72, 153, 0.48);
+            background: rgba(255, 240, 252, 0.94);
+            box-shadow: 0 8px 24px rgba(190,24,93,0.13), 0 0 0 2px rgba(236,72,153,0.09);
         }
 
         .btn-respuesta:hover:not(:disabled)::after {
@@ -509,15 +617,18 @@ if (is_dir($imgDir)) {
         }
 
         .btn-respuesta.correcta {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
+            background: linear-gradient(135deg, #d1fae5, #bbf7d0) !important;
             border-color: #10b981 !important;
             color: #064e3b;
+            box-shadow: 0 4px 18px rgba(16,185,129,0.22) !important;
+            animation: popIn 0.42s cubic-bezier(.21,.81,.35,1) both;
         }
 
         .btn-respuesta.incorrecta {
             background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
             border-color: #ef4444 !important;
             color: #7f1d1d;
+            box-shadow: 0 4px 18px rgba(239,68,68,0.18) !important;
         }
 
         #tarjeta-pregunta.answer-glow-good {
@@ -583,8 +694,9 @@ if (is_dir($imgDir)) {
         }
 
         .puzzle-tile.selected {
-            outline: 3px solid rgba(244, 63, 94, 0.72);
-            transform: scale(1.02);
+            outline: 3px solid rgba(236, 72, 153, 0.75);
+            transform: scale(1.04);
+            box-shadow: 0 0 0 6px rgba(167,139,250,0.18), 0 14px 26px rgba(190,24,93,0.24);
         }
 
         .puzzle-fallback {
@@ -678,41 +790,60 @@ if (is_dir($imgDir)) {
         .memory-card {
             width: 90px;
             height: 90px;
-            border-radius: 0.85rem;
-            border: 2px solid rgba(244, 63, 94, 0.3);
-            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            border-radius: 1.1rem;
+            border: 2px solid rgba(167, 139, 250, 0.38);
+            background: linear-gradient(135deg, #be185d 0%, #ec4899 50%, #a78bfa 100%);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.2rem;
-            transition: all 0.25s ease;
+            transition: transform 0.28s cubic-bezier(.21,.81,.35,1), box-shadow 0.28s ease, background 0.28s ease;
             position: relative;
             transform-style: preserve-3d;
-            box-shadow: 0 8px 18px rgba(244, 63, 94, 0.2);
+            box-shadow: 0 8px 22px rgba(190, 24, 93, 0.22);
+            overflow: hidden;
         }
 
-        .memory-card:hover:not(.matched) {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(244, 63, 94, 0.3);
+        .memory-card::before {
+            content: '\2665';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: rgba(255,255,255,0.36);
+            pointer-events: none;
+            transition: opacity 0.22s ease;
+            line-height: 1;
+        }
+
+        .memory-card.flipped::before,
+        .memory-card.matched::before { opacity: 0; }
+
+        .memory-card:hover:not(.matched):not(.flipped) {
+            transform: translateY(-6px) scale(1.06);
+            box-shadow: 0 18px 32px rgba(190, 24, 93, 0.34);
         }
 
         .memory-card.flipped {
-            background: linear-gradient(135deg, #fde2e2, #fecaca);
-            border-color: rgba(244, 63, 94, 0.6);
+            background: linear-gradient(135deg, #fce7f3, #ede9fe);
+            border-color: rgba(236, 72, 153, 0.50);
+            box-shadow: 0 10px 26px rgba(190, 24, 93, 0.18);
         }
 
         .memory-card.matched {
             background: linear-gradient(135deg, #d1fae5, #a7f3d0);
             border-color: #10b981;
             cursor: default;
-            animation: matchPulse 0.5s ease;
+            animation: matchPulse 0.55s cubic-bezier(.21,.81,.35,1);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.30);
         }
 
         @keyframes matchPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-            100% { transform: scale(1); }
+            0%   { transform: scale(1); }
+            35%  { transform: scale(1.16) rotate(4deg); }
+            58%  { transform: scale(1.04) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         .memory-card-inner {
@@ -721,6 +852,8 @@ if (is_dir($imgDir)) {
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            z-index: 1;
         }
 
         /* ===== CATCH MY LOVE GAME ===== */
@@ -779,14 +912,14 @@ if (is_dir($imgDir)) {
         <div class="blob four"></div>  <!-- Royal golden sparkle -->
 
         <!-- Fairy dust sparkles floating around the enchanted kingdom -->
-        <span class="spark" style="top:5%;left:6%;font-size:1.5rem;animation-delay:.2s;">&#x2728;</span>
-        <span class="spark" style="top:9%;right:7%;font-size:1.1rem;animation-delay:1.4s;">&#x2B50;</span>
-        <span class="spark" style="top:19%;left:18%;font-size:1.0rem;animation-delay:2.8s;">&#x2728;</span>
-        <span class="spark" style="top:14%;right:22%;font-size:1.6rem;animation-delay:.6s;">&#x1F451;</span>
-        <span class="spark" style="top:68%;left:4%;font-size:1.2rem;animation-delay:1.9s;">&#x1F338;</span>
-        <span class="spark" style="top:78%;right:6%;font-size:1.3rem;animation-delay:3.2s;">&#x2728;</span>
-        <span class="spark" style="top:86%;left:14%;font-size:1.0rem;animation-delay:.9s;">&#x2B50;</span>
-        <span class="spark" style="top:91%;right:18%;font-size:1.4rem;animation-delay:2.1s;">&#x1F339;</span>
+        <span class="spark" style="top:5%;left:6%;font-size:1.5rem;animation-delay:.2s;animation-name:floatBounce;animation-duration:3.8s;">&#x2728;</span>
+        <span class="spark" style="top:9%;right:7%;font-size:1.1rem;animation-delay:1.4s;animation-name:glimmer;animation-duration:4.2s;">&#x2B50;</span>
+        <span class="spark" style="top:19%;left:18%;font-size:1.0rem;animation-delay:2.8s;animation-name:glimmer;animation-duration:3.6s;">&#x2728;</span>
+        <span class="spark" style="top:14%;right:22%;font-size:1.6rem;animation-delay:.6s;animation-name:floatBounce;animation-duration:4.5s;">&#x1F451;</span>
+        <span class="spark" style="top:68%;left:4%;font-size:1.2rem;animation-delay:1.9s;animation-name:floatBounce;animation-duration:3.9s;">&#x1F338;</span>
+        <span class="spark" style="top:78%;right:6%;font-size:1.3rem;animation-delay:3.2s;animation-name:glimmer;animation-duration:4.8s;">&#x2728;</span>
+        <span class="spark" style="top:86%;left:14%;font-size:1.0rem;animation-delay:.9s;animation-name:glimmer;animation-duration:3.5s;">&#x2B50;</span>
+        <span class="spark" style="top:91%;right:18%;font-size:1.4rem;animation-delay:2.1s;animation-name:floatBounce;animation-duration:5.0s;">&#x1F339;</span>
     </div>
 
     <div class="container" style="max-width: 980px; position: relative; z-index: 2;">
@@ -811,7 +944,7 @@ if (is_dir($imgDir)) {
             <div class="tab-pane fade show active" id="tab-quiz" role="tabpanel" aria-labelledby="tab-quiz-btn" tabindex="0">
                 <div class="quiz-pane-wrap">
         <div id="screen-inicio" class="card-romantic p-4 p-md-5 text-center fade-in">
-            <div style="font-size: 3.4rem; line-height:1;">&#x1F496;</div>
+            <div class="icon-heartbeat" style="font-size: 3.4rem; line-height:1;">&#x1F496;</div>
             <h1 class="font-title fw-bold mb-2" style="font-size: clamp(1.9rem, 6vw, 2.6rem); color: #a5164d;">
                 Happy Anniversary, My Love 🌹
             </h1>
@@ -819,8 +952,8 @@ if (is_dir($imgDir)) {
                 1 year &amp; 10 months loving you with everything I have 💕
             </p>
             <p class="mx-auto text-secondary mb-4" style="max-width: 480px; line-height: 1.75;">
-                I prepared <strong>8 little questions just for you</strong>, a puzzle of our photos,
-                and a letter written straight from my heart. You are my everything, baby. 💖
+                Baby I prepared <strong>8 little questions for you</strong>, a puzzle of our photos,
+                and a letter written straight from my heart. You are my everything, Sweetie and I want to spend my life with you. 💖
             </p>
 
             <div class="d-flex justify-content-center gap-4 gap-md-5 mb-4 flex-wrap">
