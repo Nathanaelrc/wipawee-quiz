@@ -75,39 +75,56 @@ if (is_dir($imgDir)) {
 
     <style>
         :root {
-            --rose-1: #f43f5e;
-            --rose-2: #e11d48;
-            --peach: #fb7185;
-            --gold: #f59e0b;
-            --ink: #23132b;
-            --card: rgba(255, 255, 255, 0.8);
+            --rose-1: #ec4899;
+            --rose-2: #be185d;
+            --peach: #f9a8d4;
+            --gold: #fbbf24;
+            --royal: #7c3aed;
+            --sky: #60a5fa;
+            --ink: #2d0a4e;
+            --card: rgba(255, 248, 254, 0.88);
         }
 
         body {
             font-family: 'Manrope', sans-serif;
             min-height: 100vh;
             color: var(--ink);
+            /* Princess Aurora — enchanted kingdom background */
             background:
-                radial-gradient(circle at 10% 8%, rgba(251, 113, 133, 0.42), transparent 34%),
-                radial-gradient(circle at 90% 20%, rgba(245, 158, 11, 0.22), transparent 40%),
-                radial-gradient(circle at 30% 85%, rgba(244, 63, 94, 0.22), transparent 34%),
-                linear-gradient(130deg, #fff6fb 0%, #fff0f6 48%, #fff7e9 100%);
+                radial-gradient(ellipse at 22% 0%, rgba(196, 130, 255, 0.38), transparent 42%),
+                radial-gradient(ellipse at 82% 8%, rgba(144, 205, 255, 0.34), transparent 40%),
+                radial-gradient(ellipse at 50% 52%, rgba(249, 168, 212, 0.30), transparent 44%),
+                radial-gradient(ellipse at 10% 92%, rgba(251, 191, 36, 0.20), transparent 34%),
+                radial-gradient(ellipse at 90% 88%, rgba(236, 72, 153, 0.18), transparent 36%),
+                linear-gradient(148deg, #f3e8ff 0%, #fce7f3 28%, #e0f2fe 58%, #fdf4ff 100%);
             overflow-x: hidden;
             position: relative;
         }
 
+        /* Fairy dust sparkle layer */
         body::before {
             content: '';
             position: fixed;
-            inset: -30% -20%;
+            inset: 0;
             pointer-events: none;
             z-index: 0;
-            background:
-                radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.45), transparent 16%),
-                radial-gradient(circle at 72% 28%, rgba(255, 255, 255, 0.35), transparent 12%),
-                radial-gradient(circle at 42% 72%, rgba(255, 255, 255, 0.3), transparent 14%),
-                radial-gradient(circle at 88% 76%, rgba(255, 255, 255, 0.26), transparent 10%);
-            animation: bgTwinkle 8.4s ease-in-out infinite;
+            background-image:
+                radial-gradient(1.5px 1.5px at 12% 18%, rgba(251, 191, 36, 0.72), transparent),
+                radial-gradient(1px 1px at 28% 9%, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(2px 2px at 45% 22%, rgba(236, 72, 153, 0.55), transparent),
+                radial-gradient(1.5px 1.5px at 62% 14%, rgba(251, 191, 36, 0.68), transparent),
+                radial-gradient(1px 1px at 74% 6%, rgba(255, 255, 255, 0.85), transparent),
+                radial-gradient(2px 2px at 88% 19%, rgba(144, 205, 255, 0.65), transparent),
+                radial-gradient(1px 1px at 8%  52%, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(1.5px 1.5px at 35% 64%, rgba(251, 191, 36, 0.60), transparent),
+                radial-gradient(1px 1px at 55% 71%, rgba(196, 130, 255, 0.6), transparent),
+                radial-gradient(2px 2px at 79% 58%, rgba(255, 255, 255, 0.75), transparent),
+                radial-gradient(1px 1px at 92% 44%, rgba(236, 72, 153, 0.50), transparent),
+                radial-gradient(1.5px 1.5px at 17% 82%, rgba(251, 191, 36, 0.55), transparent),
+                radial-gradient(1px 1px at 48% 88%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(2px 2px at 68% 93%, rgba(144, 205, 255, 0.55), transparent),
+                radial-gradient(1px 1px at 85% 79%, rgba(255, 255, 255, 0.7), transparent);
+            animation: fairyDust 7.5s ease-in-out infinite;
             mix-blend-mode: screen;
         }
 
@@ -123,40 +140,55 @@ if (is_dir($imgDir)) {
             z-index: 0;
         }
 
+        /* Aurora's three fairy godmothers — Flora (pink), Merryweather (blue), Fauna (lavender) */
         .blob {
             position: absolute;
-            filter: blur(36px);
-            opacity: 0.48;
-            animation: drift 14s ease-in-out infinite;
+            filter: blur(44px);
+            opacity: 0.44;
+            animation: drift 15s ease-in-out infinite;
         }
 
         .blob.one {
-            width: 240px;
-            height: 240px;
+            /* Flora — the pink fairy */
+            width: 290px;
+            height: 290px;
             border-radius: 52% 48% 57% 43%;
-            background: rgba(244, 63, 94, 0.28);
-            top: -30px;
-            left: -30px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.55), rgba(249, 168, 212, 0.20));
+            top: -50px;
+            left: -40px;
         }
 
         .blob.two {
-            width: 280px;
-            height: 280px;
+            /* Merryweather — the blue fairy */
+            width: 310px;
+            height: 310px;
             border-radius: 61% 39% 38% 62%;
-            background: rgba(251, 146, 60, 0.24);
-            right: -80px;
-            top: 25%;
-            animation-delay: 1.1s;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.48), rgba(144, 205, 255, 0.18));
+            right: -90px;
+            top: 22%;
+            animation-delay: 1.4s;
         }
 
         .blob.three {
-            width: 250px;
-            height: 250px;
+            /* Fauna / Royal Magic — lavender */
+            width: 270px;
+            height: 270px;
             border-radius: 36% 64% 65% 35%;
-            background: rgba(244, 63, 94, 0.25);
-            left: 18%;
-            bottom: -90px;
-            animation-delay: 2.2s;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.44), rgba(196, 130, 255, 0.16));
+            left: 20%;
+            bottom: -80px;
+            animation-delay: 2.6s;
+        }
+
+        .blob.four {
+            /* Golden crown / magic wand sparkle */
+            width: 200px;
+            height: 200px;
+            border-radius: 44% 56% 50% 50%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.38), rgba(253, 224, 71, 0.12));
+            right: 12%;
+            bottom: 8%;
+            animation-delay: 3.8s;
         }
 
         @keyframes drift {
@@ -166,25 +198,37 @@ if (is_dir($imgDir)) {
 
         .spark {
             position: absolute;
-            animation: floatUp 4.8s ease-in-out infinite;
-            opacity: 0.18;
+            animation: floatUp 5.5s ease-in-out infinite;
+            opacity: 0.22;
+            filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.5));
         }
 
         @keyframes floatUp {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
-            50% { transform: translateY(-14px) rotate(8deg); opacity: 0.28; }
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.14; }
+            40% { transform: translateY(-18px) rotate(10deg) scale(1.12); opacity: 0.34; }
+            70% { transform: translateY(-8px) rotate(-5deg) scale(0.96); opacity: 0.22; }
+        }
+
+        @keyframes fairyDust {
+            0%, 100% { opacity: 0.55; transform: translate3d(0, 0, 0) scale(1); }
+            33%  { opacity: 0.85; transform: translate3d(0.8%, -0.6%, 0) scale(1.02); }
+            66%  { opacity: 0.65; transform: translate3d(-0.5%, 0.4%, 0) scale(0.99); }
         }
 
         .card-romantic {
             background: var(--card);
-            border: 1px solid rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.82);
             border-radius: 1.25rem;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 20px 46px rgba(66, 25, 52, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            /* Royal Aurora glow: pink on top-left, blue on bottom-right */
+            box-shadow:
+                0 20px 48px rgba(45, 10, 78, 0.14),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                0 0 0 0.5px rgba(236, 72, 153, 0.10);
             position: relative;
             overflow: hidden;
-            animation: cardGlowPulse 5.8s ease-in-out infinite;
+            animation: cardGlowPulse 6s ease-in-out infinite;
         }
 
         .card-romantic::after {
@@ -194,9 +238,9 @@ if (is_dir($imgDir)) {
             left: -40%;
             width: 56%;
             height: 300%;
-            background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.34) 48%, transparent 100%);
+            background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.38) 48%, transparent 100%);
             transform: rotate(18deg);
-            animation: sheenSweep 7.2s linear infinite;
+            animation: sheenSweep 8s linear infinite;
             pointer-events: none;
         }
 
@@ -229,14 +273,13 @@ if (is_dir($imgDir)) {
             70% { transform: translateX(-5px); }
         }
 
-        @keyframes bgTwinkle {
-            0%, 100% { opacity: 0.45; transform: translate3d(0, 0, 0) scale(1); }
-            50% { opacity: 0.78; transform: translate3d(-1.5%, -1.2%, 0) scale(1.03); }
-        }
-
         @keyframes cardGlowPulse {
-            0%, 100% { box-shadow: 0 20px 46px rgba(66, 25, 52, 0.12); }
-            50% { box-shadow: 0 20px 46px rgba(66, 25, 52, 0.12), 0 0 34px rgba(244, 63, 94, 0.16); }
+            0%, 100% {
+                box-shadow: 0 20px 48px rgba(45,10,78,0.14), inset 0 1px 0 rgba(255,255,255,0.7), 0 0 0 0.5px rgba(236,72,153,0.10);
+            }
+            50% {
+                box-shadow: 0 20px 48px rgba(45,10,78,0.18), inset 0 1px 0 rgba(255,255,255,0.7), 0 0 28px rgba(196,130,255,0.18), 0 0 0 0.5px rgba(96,165,250,0.14);
+            }
         }
 
         @keyframes sheenSweep {
@@ -245,8 +288,8 @@ if (is_dir($imgDir)) {
         }
 
         @keyframes buttonGlow {
-            0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0)); }
-            50% { filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.26)); }
+            0%, 100% { filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+            50% { filter: drop-shadow(0 0 9px rgba(251,191,36,0.35)); }
         }
 
         @keyframes answerPulseGood {
@@ -272,15 +315,17 @@ if (is_dir($imgDir)) {
             border-radius: 999px;
             padding: 0.85rem 1.9rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--rose-1), var(--peach));
-            box-shadow: 0 12px 26px rgba(244, 63, 94, 0.33);
+            /* Aurora's pink dress gradient */
+            background: linear-gradient(135deg, #be185d, #ec4899, #f9a8d4);
+            box-shadow: 0 12px 28px rgba(190, 24, 93, 0.35), inset 0 1px 0 rgba(255,255,255,0.25);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-shadow: 0 1px 3px rgba(100,0,50,0.25);
         }
 
         .btn-love:hover {
             color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 16px 34px rgba(244, 63, 94, 0.4);
+            box-shadow: 0 18px 36px rgba(190, 24, 93, 0.42), inset 0 1px 0 rgba(255,255,255,0.30);
         }
 
         .btn-gold {
@@ -339,8 +384,8 @@ if (is_dir($imgDir)) {
 
         .tab-love .nav-link.active {
             color: #fff;
-            background: linear-gradient(135deg, #f43f5e, #fb7185);
-            box-shadow: 0 10px 24px rgba(244, 63, 94, 0.3);
+            background: linear-gradient(135deg, #be185d, #ec4899, #a78bfa);
+            box-shadow: 0 10px 24px rgba(190, 24, 93, 0.32), 0 2px 8px rgba(167, 139, 250, 0.22);
         }
 
         .quiz-pane-wrap {
@@ -726,15 +771,22 @@ if (is_dir($imgDir)) {
 <body class="d-flex align-items-center justify-content-center py-4">
     <button id="btn-audio" class="audio-toggle" type="button" aria-pressed="false">🔇 Music: Off</button>
 
+    <!-- Princess Aurora Enchanted Background -->
     <div class="aurora">
-        <div class="blob one"></div>
-        <div class="blob two"></div>
-        <div class="blob three"></div>
+        <div class="blob one"></div>   <!-- Flora — pink fairy -->
+        <div class="blob two"></div>   <!-- Merryweather — blue fairy -->
+        <div class="blob three"></div> <!-- Fauna — lavender magic -->
+        <div class="blob four"></div>  <!-- Royal golden sparkle -->
 
-        <span class="spark" style="top:10%;left:7%;font-size:1.3rem;animation-delay:.2s;">✨</span>
-        <span class="spark" style="top:17%;right:8%;font-size:1.8rem;animation-delay:1.1s;">💗</span>
-        <span class="spark" style="top:72%;left:6%;font-size:1.1rem;animation-delay:2s;">🌸</span>
-        <span class="spark" style="top:82%;right:13%;font-size:1.4rem;animation-delay:.7s;">💕</span>
+        <!-- Fairy dust sparkles floating around the enchanted kingdom -->
+        <span class="spark" style="top:5%;left:6%;font-size:1.5rem;animation-delay:.2s;">&#x2728;</span>
+        <span class="spark" style="top:9%;right:7%;font-size:1.1rem;animation-delay:1.4s;">&#x2B50;</span>
+        <span class="spark" style="top:19%;left:18%;font-size:1.0rem;animation-delay:2.8s;">&#x2728;</span>
+        <span class="spark" style="top:14%;right:22%;font-size:1.6rem;animation-delay:.6s;">&#x1F451;</span>
+        <span class="spark" style="top:68%;left:4%;font-size:1.2rem;animation-delay:1.9s;">&#x1F338;</span>
+        <span class="spark" style="top:78%;right:6%;font-size:1.3rem;animation-delay:3.2s;">&#x2728;</span>
+        <span class="spark" style="top:86%;left:14%;font-size:1.0rem;animation-delay:.9s;">&#x2B50;</span>
+        <span class="spark" style="top:91%;right:18%;font-size:1.4rem;animation-delay:2.1s;">&#x1F339;</span>
     </div>
 
     <div class="container" style="max-width: 980px; position: relative; z-index: 2;">
