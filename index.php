@@ -2823,7 +2823,7 @@ if (is_dir($imgDir)) {
             const b  = $('catcher-love-bar'); if (b) b.style.width = cg.love + '%';
         }
         function spawnInterval() { return Math.max(40, 90 - Math.floor(cg.love / 25) * 12); }
-        function itemSpeed()     { return 2.5 + Math.floor(cg.love / 25) * 0.55; }
+        function itemSpeed()     { return 1.9 + Math.floor(cg.love / 25) * 0.55; }
         function badChance()     { return cg.love < 25 ? 0.13 : cg.love < 50 ? 0.18 : cg.love < 75 ? 0.22 : 0.27; }
 
         function spawnItem() {
@@ -2845,7 +2845,7 @@ if (is_dir($imgDir)) {
 
         function updateGame() {
             if (!cg.running || !cv) return;
-            const cw = cv.width, ch = cv.height, ms = 5.5;
+            const cw = cv.width, ch = cv.height, ms = 11;
             if (cg.keys.left)  cg.px = Math.max(0, cg.px - ms);
             if (cg.keys.right) cg.px = Math.min(cw - cg.pw, cg.px + ms);
             cg.stimer++;
@@ -2856,7 +2856,7 @@ if (is_dir($imgDir)) {
                 item.wobble += 0.044;
                 item.x += Math.sin(item.wobble) * 0.65;
                 item.x = Math.max(item.size, Math.min(cw - item.size, item.x));
-                const ix = item.x > cg.px - item.size * 0.6 && item.x < cg.px + cg.pw + item.size * 0.6;
+                const ix = item.x > cg.px - item.size * 1.1 && item.x < cg.px + cg.pw + item.size * 1.1;
                 const iy = item.y + item.size > pY && item.y - item.size < pY + cg.ph;
                 if (ix && iy) {
                     if (item.bad) {
