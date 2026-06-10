@@ -1,0 +1,90 @@
+[
+  {
+    "pregunta": "1) How long have we been together?",
+    "opciones": [
+      "8 months",
+      "1 year and 2 months",
+      "1 year and 10 months",
+      "2 years and 3 months",
+      "6 months"
+    ],
+    "correcta": 2
+  },
+  {
+    "pregunta": "2) What is my favorite color?",
+    "opciones": [
+      "Light blue",
+      "Red",
+      "Dark green",
+      "Dark blue",
+      "Black"
+    ],
+    "correcta": 3
+  },
+  {
+    "pregunta": "3) What color are my eyes?",
+    "opciones": [
+      "Green",
+      "Light brown",
+      "Blue",
+      "Black",
+      "Dark brown"
+    ],
+    "correcta": 4
+  },
+  {
+    "pregunta": "4) What food do I dislike?",
+    "opciones": [
+      "Tomatoes",
+      "Garlic",
+      "Peppers",
+      "Onions",
+      "Mushrooms"
+    ],
+    "correcta": 3
+  },
+  {
+    "pregunta": "5) On what day did I ask you to be my girlfriend?",
+    "opciones": [
+      "July 5th",
+      "July 20th",
+      "June 10th",
+      "August 14th",
+      "July 10th"
+    ],
+    "correcta": 4
+  },
+  {
+    "pregunta": "6) What color are my glasses?",
+    "opciones": [
+      "Brown",
+      "Silver",
+      "Blue",
+      "Black",
+      "Transparent"
+    ],
+    "correcta": 3
+  },
+  {
+    "pregunta": "7) What do I love most about you?",
+    "opciones": [
+      "The way you speak",
+      "Your smile only",
+      "Your sense of humor",
+      "Your kindness",
+      "Everything, because you are perfect"
+    ],
+    "correcta": 4
+  },
+  {
+    "pregunta": "8) Why do I love talking to you and calling you every day?",
+    "opciones": [
+      "Because I have free time",
+      "Because we have a lot in common",
+      "Because my life without you cannot be happy, and you are my everything",
+      "Because I miss your voice",
+      "Because I like video calls"
+    ],
+    "correcta": 2
+  }
+]

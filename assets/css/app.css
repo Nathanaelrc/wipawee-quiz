@@ -1,0 +1,860 @@
+        :root {
+            --rose-1: #ec4899;
+            --rose-2: #be185d;
+            --peach: #f9a8d4;
+            --gold: #fbbf24;
+            --royal: #7c3aed;
+            --sky: #60a5fa;
+            --ink: #2d0a4e;
+            --card: rgba(255, 248, 254, 0.88);
+        }
+
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            min-height: 100vh;
+            color: var(--ink);
+            /* Princess Aurora — enchanted kingdom background */
+            background:
+                radial-gradient(ellipse at 22% 0%, rgba(196, 130, 255, 0.38), transparent 42%),
+                radial-gradient(ellipse at 82% 8%, rgba(144, 205, 255, 0.34), transparent 40%),
+                radial-gradient(ellipse at 50% 52%, rgba(249, 168, 212, 0.30), transparent 44%),
+                radial-gradient(ellipse at 10% 92%, rgba(251, 191, 36, 0.20), transparent 34%),
+                radial-gradient(ellipse at 90% 88%, rgba(236, 72, 153, 0.18), transparent 36%),
+                linear-gradient(148deg, #f3e8ff 0%, #fce7f3 28%, #e0f2fe 58%, #fdf4ff 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fairy dust sparkle layer */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(1.5px 1.5px at 12% 18%, rgba(251, 191, 36, 0.72), transparent),
+                radial-gradient(1px 1px at 28% 9%, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(2px 2px at 45% 22%, rgba(236, 72, 153, 0.55), transparent),
+                radial-gradient(1.5px 1.5px at 62% 14%, rgba(251, 191, 36, 0.68), transparent),
+                radial-gradient(1px 1px at 74% 6%, rgba(255, 255, 255, 0.85), transparent),
+                radial-gradient(2px 2px at 88% 19%, rgba(144, 205, 255, 0.65), transparent),
+                radial-gradient(1px 1px at 8%  52%, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(1.5px 1.5px at 35% 64%, rgba(251, 191, 36, 0.60), transparent),
+                radial-gradient(1px 1px at 55% 71%, rgba(196, 130, 255, 0.6), transparent),
+                radial-gradient(2px 2px at 79% 58%, rgba(255, 255, 255, 0.75), transparent),
+                radial-gradient(1px 1px at 92% 44%, rgba(236, 72, 153, 0.50), transparent),
+                radial-gradient(1.5px 1.5px at 17% 82%, rgba(251, 191, 36, 0.55), transparent),
+                radial-gradient(1px 1px at 48% 88%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(2px 2px at 68% 93%, rgba(144, 205, 255, 0.55), transparent),
+                radial-gradient(1px 1px at 85% 79%, rgba(255, 255, 255, 0.7), transparent);
+            animation: fairyDust 7.5s ease-in-out infinite;
+            mix-blend-mode: screen;
+        }
+
+        .font-title {
+            font-family: 'Nunito', sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        .aurora {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Aurora's three fairy godmothers — Flora (pink), Merryweather (blue), Fauna (lavender) */
+        .blob {
+            position: absolute;
+            filter: blur(44px);
+            opacity: 0.44;
+            animation: drift 15s ease-in-out infinite;
+        }
+
+        .blob.one {
+            /* Flora — the pink fairy */
+            width: 290px;
+            height: 290px;
+            border-radius: 52% 48% 57% 43%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.55), rgba(249, 168, 212, 0.20));
+            top: -50px;
+            left: -40px;
+        }
+
+        .blob.two {
+            /* Merryweather — the blue fairy */
+            width: 310px;
+            height: 310px;
+            border-radius: 61% 39% 38% 62%;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.48), rgba(144, 205, 255, 0.18));
+            right: -90px;
+            top: 22%;
+            animation-delay: 1.4s;
+        }
+
+        .blob.three {
+            /* Fauna / Royal Magic — lavender */
+            width: 270px;
+            height: 270px;
+            border-radius: 36% 64% 65% 35%;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.44), rgba(196, 130, 255, 0.16));
+            left: 20%;
+            bottom: -80px;
+            animation-delay: 2.6s;
+        }
+
+        .blob.four {
+            /* Golden crown / magic wand sparkle */
+            width: 200px;
+            height: 200px;
+            border-radius: 44% 56% 50% 50%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.38), rgba(253, 224, 71, 0.12));
+            right: 12%;
+            bottom: 8%;
+            animation-delay: 3.8s;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-14px) scale(1.05); }
+        }
+
+        .spark {
+            position: absolute;
+            animation: floatUp 5.5s ease-in-out infinite;
+            opacity: 0.22;
+            filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.5));
+        }
+
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.14; }
+            40% { transform: translateY(-18px) rotate(10deg) scale(1.12); opacity: 0.34; }
+            70% { transform: translateY(-8px) rotate(-5deg) scale(0.96); opacity: 0.22; }
+        }
+
+        @keyframes fairyDust {
+            0%, 100% { opacity: 0.55; transform: translate3d(0, 0, 0) scale(1); }
+            33%  { opacity: 0.85; transform: translate3d(0.8%, -0.6%, 0) scale(1.02); }
+            66%  { opacity: 0.65; transform: translate3d(-0.5%, 0.4%, 0) scale(0.99); }
+        }
+
+        .card-romantic {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            border-radius: 1.25rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            /* Royal Aurora glow: pink on top-left, blue on bottom-right */
+            box-shadow:
+                0 20px 48px rgba(45, 10, 78, 0.14),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                0 0 0 0.5px rgba(236, 72, 153, 0.10);
+            position: relative;
+            overflow: hidden;
+            animation: cardGlowPulse 6s ease-in-out infinite;
+        }
+
+        .card-romantic::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 42%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, transparent 100%);
+            border-radius: 1.25rem 1.25rem 0 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card-romantic::after {
+            content: '';
+            position: absolute;
+            top: -120%;
+            left: -40%;
+            width: 56%;
+            height: 300%;
+            background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.38) 48%, transparent 100%);
+            transform: rotate(18deg);
+            animation: sheenSweep 8s linear infinite;
+            pointer-events: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.65s cubic-bezier(.21,.81,.35,1) both;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s cubic-bezier(.21,.81,.35,1) both;
+        }
+
+        .shake {
+            animation: shake 0.46s ease both;
+        }
+
+        @keyframes fadeIn {
+            0%   { opacity: 0; transform: translateY(30px) scale(0.94); }
+            55%  { opacity: 1; transform: translateY(-5px) scale(1.015); }
+            78%  { transform: translateY(2px) scale(0.997); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            45% { transform: translateX(8px); }
+            70% { transform: translateX(-5px); }
+        }
+
+        @keyframes cardGlowPulse {
+            0%, 100% {
+                box-shadow: 0 20px 48px rgba(45,10,78,0.14), inset 0 1px 0 rgba(255,255,255,0.7), 0 0 0 0.5px rgba(236,72,153,0.10);
+            }
+            50% {
+                box-shadow: 0 20px 48px rgba(45,10,78,0.18), inset 0 1px 0 rgba(255,255,255,0.7), 0 0 28px rgba(196,130,255,0.18), 0 0 0 0.5px rgba(96,165,250,0.14);
+            }
+        }
+
+        @keyframes sheenSweep {
+            0% { transform: translateX(-180%) rotate(18deg); }
+            100% { transform: translateX(330%) rotate(18deg); }
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+            50% { filter: drop-shadow(0 0 9px rgba(251,191,36,0.35)); }
+        }
+
+        @keyframes answerPulseGood {
+            0% { transform: scale(1); }
+            35% { transform: scale(1.015); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes answerPulseBad {
+            0% { transform: scale(1); }
+            35% { transform: scale(0.994); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes burstOut {
+            0% { opacity: 1; transform: translate(0, 0) scale(0.7); }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.45); }
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15%  { transform: scale(1.22); filter: drop-shadow(0 0 7px rgba(236,72,153,0.60)); }
+            30%  { transform: scale(1.05); }
+            46%  { transform: scale(1.14); filter: drop-shadow(0 0 4px rgba(236,72,153,0.38)); }
+            62%  { transform: scale(1); filter: none; }
+        }
+
+        @keyframes popIn {
+            0%   { opacity: 0; transform: scale(0.70) rotate(-4deg); }
+            60%  { opacity: 1; transform: scale(1.08) rotate(1.5deg); }
+            80%  { transform: scale(0.96) rotate(-0.5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes floatBounce {
+            0%, 100% { transform: translateY(0); }
+            42%  { transform: translateY(-14px); }
+            64%  { transform: translateY(-7px); }
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position:  200% center; }
+        }
+
+        @keyframes glimmer {
+            0%, 100% { opacity: 0.11; transform: scale(0.84) rotate(0deg); }
+            50%  { opacity: 0.44; transform: scale(1.24) rotate(22deg); }
+        }
+
+        @keyframes sparkleIn {
+            0%   { opacity: 0; transform: scale(0) rotate(-15deg); }
+            70%  { opacity: 1; transform: scale(1.15) rotate(5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        /* Custom enchanted scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(196,130,255,0.08); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ec4899, #a78bfa); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #be185d, #7c3aed); }
+
+        /* Floating / heartbeat utility classes */
+        .icon-float { animation: floatBounce 3.4s ease-in-out infinite; display: inline-block; }
+        .icon-heartbeat { animation: heartBeat 1.9s ease-in-out infinite; display: inline-block; }
+
+        .btn-love {
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 0.9rem 2.1rem;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 0.01em;
+            background: linear-gradient(135deg, #be185d 0%, #ec4899 55%, #c084fc 100%);
+            background-size: 200% 100%;
+            box-shadow: 0 12px 30px rgba(190,24,93,0.38), inset 0 1px 0 rgba(255,255,255,0.28);
+            transition: transform 0.22s cubic-bezier(.21,.81,.35,1), box-shadow 0.22s ease, background-position 0.45s ease;
+            text-shadow: 0 1px 4px rgba(100,0,50,0.22);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-love::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -80%;
+            width: 58%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.30), transparent);
+            transition: left 0.48s ease;
+            pointer-events: none;
+        }
+        .btn-love:hover { color: #fff; transform: translateY(-3px) scale(1.035); background-position: 100% 0; box-shadow: 0 20px 44px rgba(190,24,93,0.46), inset 0 1px 0 rgba(255,255,255,0.34); }
+        .btn-love:hover::before { left: 130%; }
+        .btn-love:active { transform: translateY(-1px) scale(0.98); }
+
+        .btn-gold {
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 0.85rem 1.8rem;
+            font-weight: 800;
+            font-size: 0.97rem;
+            background: linear-gradient(135deg, #b45309 0%, #f59e0b 50%, #fde68a 100%);
+            background-size: 200% 100%;
+            box-shadow: 0 10px 28px rgba(180,83,9,0.38), inset 0 1px 0 rgba(255,255,255,0.28);
+            transition: transform 0.22s cubic-bezier(.21,.81,.35,1), box-shadow 0.22s ease, background-position 0.45s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -80%;
+            width: 58%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.32), transparent);
+            transition: left 0.48s ease;
+            pointer-events: none;
+        }
+        .btn-gold:hover { color: #fff; transform: translateY(-3px) scale(1.035); background-position: 100% 0; box-shadow: 0 16px 36px rgba(180,83,9,0.45), inset 0 1px 0 rgba(255,255,255,0.32); }
+        .btn-gold:hover::before { left: 130%; }
+        .btn-gold:active { transform: translateY(-1px) scale(0.98); }
+
+        .btn-love,
+        .btn-gold {
+            animation: buttonGlow 3.8s ease-in-out infinite;
+        }
+
+        .audio-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 30;
+            border: 1px solid rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.80);
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+            color: #be185d;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.84rem;
+            padding: 0.56rem 1.05rem;
+            box-shadow: 0 8px 24px rgba(45,10,78,0.14), inset 0 1px 0 rgba(255,255,255,0.82);
+            transition: all 0.22s cubic-bezier(.21,.81,.35,1);
+        }
+
+        .audio-toggle:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #be185d, #ec4899);
+            box-shadow: 0 12px 28px rgba(190,24,93,0.34);
+            transform: translateY(-1px);
+        }
+
+        /* ===== TAB NAV ARROWS ===== */
+        .tab-nav-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin-bottom: 0.75rem;
+        }
+        .tab-arrow {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #be185d;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 16px rgba(45,10,78,0.12), inset 0 1px 0 rgba(255,255,255,0.85);
+            transition: transform 0.22s cubic-bezier(.21,.81,.35,1), box-shadow 0.22s ease, background 0.22s ease, color 0.18s ease;
+            cursor: pointer;
+        }
+        .tab-arrow:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #be185d, #ec4899);
+            transform: scale(1.13);
+            box-shadow: 0 8px 22px rgba(190,24,93,0.38);
+        }
+        .tab-arrow:active { transform: scale(0.94); }
+        .tab-arrow:disabled { opacity: 0.28; pointer-events: none; }
+        .tab-shell-inner { flex: 1; }
+
+        .tab-shell {
+            border-radius: 1.15rem;
+            background: rgba(255, 255, 255, 0.65);
+            padding: 0.4rem;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(170%);
+            -webkit-backdrop-filter: blur(20px) saturate(170%);
+            box-shadow: 0 4px 24px rgba(45,10,78,0.09), inset 0 1px 0 rgba(255,255,255,0.82);
+        }
+
+        .tab-love .nav-link {
+            border: none;
+            color: #9f1239;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 0.62rem 1.1rem;
+            transition: color 0.2s ease, background 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
+        }
+
+        .tab-love .nav-link:not(.active):hover {
+            color: #be185d;
+            background: rgba(236, 72, 153, 0.10);
+            transform: translateY(-1px);
+        }
+
+        .tab-love .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #be185d 0%, #ec4899 55%, #a78bfa 100%);
+            box-shadow: 0 10px 26px rgba(190,24,93,0.34), 0 2px 10px rgba(167,139,250,0.26), inset 0 1px 0 rgba(255,255,255,0.24);
+        }
+
+        .quiz-pane-wrap {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .princess-game-card {
+            border-radius: 1.25rem;
+            padding: 1rem;
+        }
+
+        .princess-canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 1rem;
+            border: 1px solid rgba(165, 22, 77, 0.28);
+            background: linear-gradient(180deg, #ffe5ef 0%, #ffd7e6 100%);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 12px 26px rgba(66, 25, 52, 0.15);
+        }
+
+        .game-chip {
+            border-radius: 999px;
+            padding: 0.38rem 0.82rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #831843;
+            background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(167,139,250,0.10));
+            border: 1px solid rgba(236, 72, 153, 0.22);
+            box-shadow: 0 2px 8px rgba(190,24,93,0.07);
+            transition: transform 0.15s ease;
+        }
+
+        .game-touch-controls {
+            display: none;
+            justify-content: space-between;
+            align-items: stretch;
+            margin-bottom: 0.4rem;
+            gap: 0.8rem;
+        }
+
+        .touch-pad-left {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(58px, 1fr));
+            gap: 0.55rem;
+            flex: 1;
+        }
+
+        .touch-pad-right {
+            width: min(38vw, 156px);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .game-touch-btn {
+            min-width: 58px;
+            min-height: 52px;
+            border: none;
+            border-radius: 0.9rem;
+            color: #fff;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            box-shadow: 0 8px 18px rgba(244, 63, 94, 0.24);
+            touch-action: manipulation;
+        }
+
+        .game-touch-btn.jump {
+            width: 100%;
+            min-height: 56px;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            box-shadow: 0 8px 18px rgba(245, 158, 11, 0.32);
+        }
+
+        .progress-shell {
+            background: rgba(236, 72, 153, 0.10);
+            border-radius: 999px;
+            overflow: hidden;
+            height: 10px;
+            border: 1px solid rgba(236, 72, 153, 0.16);
+            box-shadow: inset 0 1px 3px rgba(45,10,78,0.07);
+        }
+
+        .progress-love {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #be185d, #ec4899, #a78bfa, #60a5fa);
+            background-size: 200% 100%;
+            animation: shimmer 2.2s linear infinite;
+            transition: width 0.5s cubic-bezier(.21,.81,.35,1);
+            border-radius: 999px;
+        }
+
+        .btn-respuesta {
+            width: 100%;
+            border-radius: 1.1rem;
+            border: 1.5px solid rgba(236, 72, 153, 0.18);
+            padding: 0.88rem 1.1rem;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.80);
+            transition: all 0.22s cubic-bezier(.21,.81,.35,1);
+            font-size: 0.96rem;
+            font-weight: 600;
+            color: #2d0a4e;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-respuesta::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.52) 50%, transparent 100%);
+            transform: translateX(-140%);
+            transition: transform 0.50s ease;
+            pointer-events: none;
+        }
+
+        .btn-respuesta:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.006);
+            border-color: rgba(236, 72, 153, 0.48);
+            background: rgba(255, 240, 252, 0.94);
+            box-shadow: 0 8px 24px rgba(190,24,93,0.13), 0 0 0 2px rgba(236,72,153,0.09);
+        }
+
+        .btn-respuesta:hover:not(:disabled)::after {
+            transform: translateX(135%);
+        }
+
+        .btn-respuesta:disabled {
+            cursor: default;
+        }
+
+        .btn-respuesta.correcta {
+            background: linear-gradient(135deg, #d1fae5, #bbf7d0) !important;
+            border-color: #10b981 !important;
+            color: #064e3b;
+            box-shadow: 0 4px 18px rgba(16,185,129,0.22) !important;
+            animation: popIn 0.42s cubic-bezier(.21,.81,.35,1) both;
+        }
+
+        .btn-respuesta.incorrecta {
+            background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+            border-color: #ef4444 !important;
+            color: #7f1d1d;
+            box-shadow: 0 4px 18px rgba(239,68,68,0.18) !important;
+        }
+
+        #tarjeta-pregunta.answer-glow-good {
+            animation: answerPulseGood 0.8s ease;
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.34), 0 0 38px rgba(16, 185, 129, 0.42);
+        }
+
+        #tarjeta-pregunta.answer-glow-bad {
+            animation: answerPulseBad 0.8s ease;
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.33), 0 0 34px rgba(239, 68, 68, 0.33);
+        }
+
+        #feedback.glow-good {
+            text-shadow: 0 0 12px rgba(16, 185, 129, 0.55);
+        }
+
+        #feedback.glow-bad {
+            text-shadow: 0 0 12px rgba(239, 68, 68, 0.48);
+        }
+
+        .quiz-burst {
+            position: absolute;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            pointer-events: none;
+            left: 50%;
+            top: 48%;
+            animation: burstOut 0.82s ease forwards;
+        }
+
+        .quiz-burst.good {
+            background: radial-gradient(circle, #6ee7b7 0%, #34d399 72%, rgba(16, 185, 129, 0) 100%);
+        }
+
+        .quiz-burst.bad {
+            background: radial-gradient(circle, #fda4af 0%, #ef4444 72%, rgba(239, 68, 68, 0) 100%);
+        }
+
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+
+        .puzzle-tile {
+            aspect-ratio: 1 / 1;
+            border-radius: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 18px rgba(17, 24, 39, 0.17);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-color: #f6f6f6;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .puzzle-tile:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 12px 22px rgba(17, 24, 39, 0.24);
+        }
+
+        .puzzle-tile.selected {
+            outline: 3px solid rgba(236, 72, 153, 0.75);
+            transform: scale(1.04);
+            box-shadow: 0 0 0 6px rgba(167,139,250,0.18), 0 14px 26px rgba(190,24,93,0.24);
+        }
+
+        .puzzle-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            font-size: clamp(0.9rem, 3vw, 1.3rem);
+            text-shadow: 0 1px 4px rgba(17, 24, 39, 0.35);
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+        }
+
+        .letter {
+            background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,248,232,0.92));
+            border: 2px solid rgba(245, 158, 11, 0.36);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .letter::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 15% 12%, rgba(244,63,94,0.1), transparent 42%),
+                radial-gradient(circle at 88% 88%, rgba(245,158,11,0.12), transparent 44%);
+            pointer-events: none;
+        }
+
+        .letter-reveal {
+            opacity: 0;
+            transform: scale(0.96) translateY(12px);
+            transition: all 0.72s ease;
+        }
+
+        .letter-reveal.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        @media (max-width: 576px) {
+            .puzzle-board {
+                gap: 6px;
+            }
+
+            .tab-love .nav-link {
+                font-size: 0.84rem;
+                padding: 0.52rem 0.8rem;
+            }
+
+            .princess-game-card {
+                padding: 0.75rem;
+            }
+
+            .audio-toggle {
+                top: 10px;
+                right: 10px;
+                font-size: 0.78rem;
+                padding: 0.48rem 0.78rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-touch-controls {
+                display: flex;
+            }
+
+            .princess-canvas {
+                border-radius: 0.85rem;
+            }
+
+            .tab-shell {
+                margin-bottom: 0.65rem !important;
+            }
+
+            .tab-love {
+                flex-wrap: nowrap;
+            }
+
+            .tab-love .nav-link {
+                white-space: nowrap;
+                font-size: 0.83rem;
+            }
+
+            .princess-game-card {
+                padding: 0.62rem;
+            }
+        }
+
+        .memory-card {
+            width: 90px;
+            height: 90px;
+            border-radius: 1.1rem;
+            border: 2px solid rgba(167, 139, 250, 0.38);
+            background: linear-gradient(135deg, #be185d 0%, #ec4899 50%, #a78bfa 100%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            transition: transform 0.28s cubic-bezier(.21,.81,.35,1), box-shadow 0.28s ease, background 0.28s ease;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 8px 22px rgba(190, 24, 93, 0.22);
+            overflow: hidden;
+        }
+
+        .memory-card::before {
+            content: '\2665';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: rgba(255,255,255,0.36);
+            pointer-events: none;
+            transition: opacity 0.22s ease;
+            line-height: 1;
+        }
+
+        .memory-card.flipped::before,
+        .memory-card.matched::before { opacity: 0; }
+
+        .memory-card:hover:not(.matched):not(.flipped) {
+            transform: translateY(-6px) scale(1.06);
+            box-shadow: 0 18px 32px rgba(190, 24, 93, 0.34);
+        }
+
+        .memory-card.flipped {
+            background: linear-gradient(135deg, #fce7f3, #ede9fe);
+            border-color: rgba(236, 72, 153, 0.50);
+            box-shadow: 0 10px 26px rgba(190, 24, 93, 0.18);
+        }
+
+        .memory-card.matched {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border-color: #10b981;
+            cursor: default;
+            animation: matchPulse 0.55s cubic-bezier(.21,.81,.35,1);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.30);
+        }
+
+        @keyframes matchPulse {
+            0%   { transform: scale(1); }
+            35%  { transform: scale(1.16) rotate(4deg); }
+            58%  { transform: scale(1.04) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .memory-card-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== CATCH MY LOVE GAME ===== */
+        .catcher-canvas {
+            display: block;
+            width: 100%;
+            max-width: 960px;
+            height: auto;
+            border-radius: 14px;
+            border: 2px solid rgba(244,63,94,0.28);
+            box-shadow: 0 6px 28px rgba(244,63,94,0.13);
+        }
+        .catcher-love-shell {
+            height: 14px;
+            background: rgba(244,63,94,0.10);
+            border-radius: 9px;
+            overflow: hidden;
+            border: 1px solid rgba(244,63,94,0.20);
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .catcher-love-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 9px;
+            background: linear-gradient(90deg, #f43f5e, #ec4899, #f59e0b);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 0.45rem !important;
+                padding-bottom: 0.8rem !important;
+            }
+
+            .container {
+                padding-left: 0.35rem;
+                padding-right: 0.35rem;
+            }
+
+            .game-chip {
+                font-size: 0.76rem;
+            }
+        }

@@ -3,6 +3,8 @@
  * api.php — Endpoint del mensaje final.
  */
 
+declare(strict_types=1);
+
 $secureCookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 session_set_cookie_params([
     'lifetime' => 0,
@@ -16,6 +18,12 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+$appConfigPath = __DIR__ . '/config/app.php';
+$appConfig = file_exists($appConfigPath) ? (require $appConfigPath) : [];
+if (!is_array($appConfig)) {
+    $appConfig = [];
+}
+
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
@@ -23,10 +31,24 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
 header('Cross-Origin-Opener-Policy: same-origin');
 header('Cross-Origin-Resource-Policy: same-origin');
+header('X-Permitted-Cross-Domain-Policies: none');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 
 if ($secureCookie) {
     header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
+
+function respondJson(int $statusCode, array $payload): void
+{
+    http_response_code($statusCode);
+    echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+function logSecurityEvent(string $event, array $context = []): void
+{
+    $contextJson = json_encode($context, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    error_log('[wipawee_quiz_api] ' . $event . ' ' . ($contextJson !== false ? $contextJson : '{}'));
 }
 
 function getClientIp(): string
@@ -100,30 +122,69 @@ function checkIpRateLimit(string $ip, int $windowSeconds, int $maxRequests): boo
     return $bucket['count'] <= $maxRequests;
 }
 
-$host = $_SERVER['HTTP_HOST'] ?? '';
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+function getRequestOrigin(): string
+{
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    return is_string($origin) ? trim($origin) : '';
+}
+
+function getNormalizedRequestOrigin(): string
+{
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $url = $scheme . '://' . $host;
+
+    $parts = parse_url($url);
+    if (!is_array($parts) || empty($parts['host'])) {
+        return '';
+    }
+
+    $hostPart = strtolower((string) $parts['host']);
+    $schemePart = strtolower((string) ($parts['scheme'] ?? 'http'));
+    $portPart = isset($parts['port']) ? ':' . (int) $parts['port'] : '';
+
+    return $schemePart . '://' . $hostPart . $portPart;
+}
+
+function normalizeOrigin(string $origin): string
+{
+    $parts = parse_url($origin);
+    if (!is_array($parts) || empty($parts['host'])) {
+        return '';
+    }
+
+    $schemePart = strtolower((string) ($parts['scheme'] ?? 'http'));
+    $hostPart = strtolower((string) $parts['host']);
+    $portPart = isset($parts['port']) ? ':' . (int) $parts['port'] : '';
+
+    return $schemePart . '://' . $hostPart . $portPart;
+}
+
+$origin = getRequestOrigin();
 if ($origin !== '') {
-    $originHost = parse_url($origin, PHP_URL_HOST) ?: '';
-    $requestHost = parse_url('http://' . $host, PHP_URL_HOST) ?: '';
-    if (!hash_equals((string) $requestHost, (string) $originHost)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Forbidden origin']);
-        exit;
+    $normalizedOrigin = normalizeOrigin($origin);
+    $expectedOrigin = getNormalizedRequestOrigin();
+    if ($normalizedOrigin === '' || $expectedOrigin === '' || !hash_equals($expectedOrigin, $normalizedOrigin)) {
+        logSecurityEvent('forbidden_origin', ['origin' => $origin, 'expected' => $expectedOrigin]);
+        respondJson(403, ['error' => 'Forbidden origin']);
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
-    exit;
+    respondJson(405, ['error' => 'Method not allowed']);
 }
 
 $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
 $csrfSession = $_SESSION['csrf_token'] ?? '';
 if (!is_string($csrfHeader) || !is_string($csrfSession) || $csrfSession === '' || !hash_equals($csrfSession, $csrfHeader)) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Invalid CSRF token']);
-    exit;
+    logSecurityEvent('invalid_csrf', ['ip' => getClientIp()]);
+    respondJson(403, ['error' => 'Invalid CSRF token']);
+}
+
+$contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($contentLength > 10_240) {
+    logSecurityEvent('payload_too_large', ['length' => $contentLength, 'ip' => getClientIp()]);
+    respondJson(413, ['error' => 'Payload too large']);
 }
 
 $now = time();
@@ -137,44 +198,35 @@ if (!isset($_SESSION['api_rate_window_start'], $_SESSION['api_rate_count']) || (
 }
 
 if ((int) $_SESSION['api_rate_count'] > $maxRequests) {
-    http_response_code(429);
-    echo json_encode(['error' => 'Too many requests']);
-    exit;
+    respondJson(429, ['error' => 'Too many requests']);
 }
 
 $ipWindowSeconds = 60;
 $ipMaxRequests = 80;
 $clientIp = getClientIp();
 if (!checkIpRateLimit($clientIp, $ipWindowSeconds, $ipMaxRequests)) {
-    http_response_code(429);
-    echo json_encode(['error' => 'Too many requests from this IP']);
-    exit;
+    respondJson(429, ['error' => 'Too many requests from this IP']);
 }
 
 $raw = file_get_contents('php://input');
 $input = json_decode($raw, true);
 
 if (json_last_error() !== JSON_ERROR_NONE || !isset($input['score'], $input['total'])) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Invalid request']);
-    exit;
+    respondJson(400, ['error' => 'Invalid request']);
 }
 
 $score = (int) $input['score'];
 $totalEnviado = (int) $input['total'];
 
-$totalEsperado = 8;
-$porcentajeMinimo = 0.8;
+$totalEsperado = (int) ($appConfig['expected_total_questions'] ?? 8);
+$porcentajeMinimo = (float) ($appConfig['required_ratio'] ?? 0.8);
 
 if ($score < 0 || $score > $totalEsperado || $totalEnviado < 1 || $totalEnviado > 50) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Out-of-range values']);
-    exit;
+    respondJson(400, ['error' => 'Out-of-range values']);
 }
 
 if ($totalEnviado !== $totalEsperado || ($score / $totalEsperado) < $porcentajeMinimo) {
-    echo json_encode(['success' => false, 'message' => null]);
-    exit;
+    respondJson(200, ['success' => false, 'message' => null]);
 }
 
 $mensajeAmor = <<<'TEXT'
@@ -195,7 +247,7 @@ TEXT;
 
 $mensajeSeguro = nl2br(htmlspecialchars($mensajeAmor, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
 
-echo json_encode([
+respondJson(200, [
     'success' => true,
     'message' => $mensajeSeguro,
 ]);
